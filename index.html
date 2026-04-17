@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LWVSRQ Q1 2026 Performance Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,8 +14,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #F4F4F4;
+            font-family: 'Merriweather', 'Times New Roman', Georgia, serif;
+            background-color: #f8f2f6;
             color: #333;
             line-height: 1.6;
         }
@@ -26,7 +27,7 @@
         }
 
         header {
-            background: linear-gradient(135deg, #002855 0%, #003D7A 100%);
+            background: linear-gradient(135deg, #820263 0%, #9a1a75 100%);
             color: white;
             padding: 40px 20px;
             margin-bottom: 30px;
@@ -36,21 +37,31 @@
         }
 
         header h1 {
+            font-family: 'Lato', 'Open Sans', Arial, sans-serif;
             font-size: 2.5em;
             margin-bottom: 10px;
-            font-weight: 700;
+            font-weight: 900;
+            letter-spacing: -0.5px;
         }
 
         header p {
+            font-family: 'Lato', 'Open Sans', Arial, sans-serif;
             font-size: 1.1em;
+            font-weight: 300;
             opacity: 0.95;
+        }
+
+
+        /* LWV Brand Fonts */
+        h1, h2, h3, .section-header, .kpi-label, .kpi-value, .tab-button, th {
+            font-family: 'Lato', 'Open Sans', Arial, sans-serif;
         }
 
         /* Tab Navigation */
         .tab-container {
             display: flex;
             background: white;
-            border-bottom: 3px solid #BF0D3E;
+            border-bottom: 3px solid #eca400;
             margin-bottom: 30px;
             border-radius: 8px 8px 0 0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -60,7 +71,7 @@
         .tab-button {
             flex: 1;
             padding: 16px 20px;
-            background: #F4F4F4;
+            background: #f8f2f6;
             border: none;
             cursor: pointer;
             font-size: 1em;
@@ -74,14 +85,15 @@
         }
 
         .tab-button:hover {
-            background: #E8EFF7;
-            color: #002855;
+            background: #f0e0eb;
+            color: #820263;
         }
 
         .tab-button.active {
             background: white;
-            color: #BF0D3E;
-            border-bottom-color: #BF0D3E;
+            color: #820263;
+            font-weight: 700;
+            border-bottom-color: #eca400;
         }
 
         /* KPI Cards */
@@ -97,12 +109,12 @@
             padding: 25px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border-left: 5px solid #BF0D3E;
+            border-left: 5px solid #eca400;
             text-align: center;
         }
 
         .kpi-card.alt {
-            border-left-color: #002855;
+            border-left-color: #820263;
         }
 
         .kpi-label {
@@ -117,11 +129,11 @@
         .kpi-value {
             font-size: 2.5em;
             font-weight: 700;
-            color: #002855;
+            color: #820263;
         }
 
         .kpi-card.alt .kpi-value {
-            color: #BF0D3E;
+            color: #521c50;
         }
 
         /* Content Tabs */
@@ -161,10 +173,10 @@
         }
 
         .chart-wrapper h3 {
-            color: #002855;
+            color: #820263;
             margin-bottom: 20px;
             font-size: 1.3em;
-            border-bottom: 2px solid #E8EFF7;
+            border-bottom: 2px solid #f0e0eb;
             padding-bottom: 10px;
         }
 
@@ -183,7 +195,7 @@
 
         .table-wrapper h3 {
             color: white;
-            background: #002855;
+            background: #820263;
             padding: 15px 20px;
             margin: 0;
             font-size: 1.2em;
@@ -195,15 +207,15 @@
         }
 
         thead {
-            background: #E8EFF7;
-            border-bottom: 2px solid #0051A3;
+            background: #f0e0eb;
+            border-bottom: 2px solid #eca400;
         }
 
         th {
             padding: 15px 12px;
             text-align: left;
             font-weight: 700;
-            color: #002855;
+            color: #820263;
             cursor: pointer;
             user-select: none;
             white-space: nowrap;
@@ -211,23 +223,23 @@
         }
 
         th:hover {
-            background: #D4E4F0;
+            background: #e0c4d6;
         }
 
         th::after {
             content: ' ↕';
-            color: #5B8DB8;
+            color: #820263;
             font-size: 0.8em;
             margin-left: 4px;
         }
 
         td {
             padding: 12px;
-            border-bottom: 1px solid #F4F4F4;
+            border-bottom: 1px solid #f8f2f6;
         }
 
         tbody tr:hover {
-            background: #F4F4F4;
+            background: #f8f2f6;
         }
 
         tbody tr:last-child td {
@@ -241,8 +253,8 @@
 
         /* Notes */
         .note-box {
-            background: #E8EFF7;
-            border-left: 4px solid #0051A3;
+            background: #f0e0eb;
+            border-left: 4px solid #eca400;
             padding: 15px 20px;
             border-radius: 4px;
             margin: 20px 0;
@@ -252,18 +264,18 @@
 
         /* Section Headers */
         .section-header {
-            color: #002855;
+            color: #820263;
             font-size: 1.5em;
             font-weight: 700;
             margin-top: 40px;
             margin-bottom: 20px;
-            border-bottom: 3px solid #BF0D3E;
+            border-bottom: 3px solid #eca400;
             padding-bottom: 10px;
         }
 
         /* Footer */
         footer {
-            background: #002855;
+            background: #820263;
             color: white;
             text-align: center;
             padding: 20px;
@@ -346,11 +358,11 @@
         }
 
         .color-navy {
-            color: #002855;
+            color: #820263;
         }
 
         .color-red {
-            color: #BF0D3E;
+            color: #eca400;
         }
 
         .small-text {
@@ -368,7 +380,7 @@
             display: inline-block;
             margin-top: 8px;
             padding: 6px 14px;
-            background: #E8EFF7;
+            background: #f0e0eb;
             border-radius: 4px;
             font-size: 0.85em;
             color: #555;
@@ -506,7 +518,7 @@
                 <strong>Note:</strong> No volunteer hours reported for Q1 2026. Focus on advocacy, legislative monitoring, and collaborative partnerships.
             </div>
 
-            <h3 style="color: #002855; margin-top: 30px; margin-bottom: 15px;">Legislative Meetings (3)</h3>
+            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">Legislative Meetings (3)</h3>
             <div class="table-wrapper">
                 <table id="education-legislative-table">
                     <thead>
@@ -521,7 +533,7 @@
                 </table>
             </div>
 
-            <h3 style="color: #002855; margin-top: 30px; margin-bottom: 15px;">Collaborative Meetings (6)</h3>
+            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">Collaborative Meetings (6)</h3>
             <div class="table-wrapper">
                 <table id="education-collaborative-table">
                     <thead>
@@ -537,7 +549,7 @@
                 </table>
             </div>
 
-            <h3 style="color: #002855; margin-top: 30px; margin-bottom: 15px;">School Board Observations (3)</h3>
+            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">School Board Observations (3)</h3>
             <div class="table-wrapper">
                 <table id="education-schoolboard-table">
                     <thead>
@@ -553,7 +565,7 @@
                 </table>
             </div>
 
-            <h3 style="color: #002855; margin-top: 30px; margin-bottom: 15px;">Public Education Events (3)</h3>
+            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">Public Education Events (3)</h3>
             <div class="table-wrapper">
                 <table id="education-events-table">
                     <thead>
@@ -567,7 +579,7 @@
                 </table>
             </div>
 
-            <h3 style="color: #002855; margin-top: 30px; margin-bottom: 15px;">YVote Contest</h3>
+            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">YVote Contest</h3>
             <div class="table-wrapper">
                 <table id="education-yvote-table">
                     <thead>
@@ -629,13 +641,13 @@
             </div>
 
             <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                <h3 style="color: #002855; margin-bottom: 15px;">Q1 Summary</h3>
+                <h3 style="color: #820263; margin-bottom: 15px;">Q1 Summary</h3>
                 <table style="width: 100%;">
                     <tr>
                         <td style="padding: 8px;"><strong>Total Online Registrations Assisted:</strong></td>
                         <td style="padding: 8px; text-align: right;"><strong>0</strong></td>
                     </tr>
-                    <tr style="background: #F4F4F4;">
+                    <tr style="background: #f8f2f6;">
                         <td style="padding: 8px;"><strong>Total Hard-Copy Forms:</strong></td>
                         <td style="padding: 8px; text-align: right;"><strong>0</strong></td>
                     </tr>
@@ -810,7 +822,7 @@
             </div>
 
             <div style="background: white; padding: 25px; border-radius: 8px; margin-top: 20px;">
-                <h3 style="color: #002855; margin-bottom: 15px;">Q1 Summary</h3>
+                <h3 style="color: #820263; margin-bottom: 15px;">Q1 Summary</h3>
                 <p style="margin-bottom: 15px;">
                     The Board of Directors contributed <strong>112.75 volunteer hours</strong> in Q1 2026, representing the largest volunteer contribution across all teams. These hours include leadership, governance, strategic planning, and administrative functions essential to LWVSRQ's operations.
                 </p>
@@ -831,7 +843,7 @@
             </div>
 
             <div style="background: white; padding: 25px; border-radius: 8px; margin-top: 20px;">
-                <h3 style="color: #002855; margin-bottom: 15px;">Q1 Summary</h3>
+                <h3 style="color: #820263; margin-bottom: 15px;">Q1 Summary</h3>
                 <p style="margin-bottom: 15px;">
                     The Vote411 initiative contributed <strong>7.00 volunteer hours</strong> in Q1 2026. This effort supports LWV's nationally recognized voter information platform, helping voters research candidates and ballot measures.
                 </p>
@@ -1020,7 +1032,7 @@
         }
 
         // ===== CHART CONFIGURATION =====
-        const chartColors = ['#002855', '#BF0D3E', '#0051A3', '#5B8DB8', '#8B1A32', '#003D7A', '#D4627A'];
+        const chartColors = ['#521c50', '#eca400', '#820263', '#eca400', '#820263', '#d4890a', '#E8D48A'];
 
         // Chart 1: Hours by Team
         const ctx1 = document.getElementById('chart-hours-by-team').getContext('2d');
@@ -1032,7 +1044,7 @@
                     label: 'Volunteer Hours',
                     data: data.hoursByTeam.values,
                     backgroundColor: chartColors,
-                    borderColor: '#002855',
+                    borderColor: '#820263',
                     borderWidth: 1
                 }]
             },
@@ -1071,7 +1083,7 @@
                 labels: data.hoursByCategory.labels,
                 datasets: [{
                     data: data.hoursByCategory.values,
-                    backgroundColor: ['#0051A3', '#BF0D3E', '#002855'],
+                    backgroundColor: ['#820263', '#eca400', '#9a1a75'],
                     borderColor: '#FFFFFF',
                     borderWidth: 2
                 }]
@@ -1107,8 +1119,8 @@
                 datasets: [{
                     label: 'Attendees',
                     data: data.eventAttendance.values,
-                    backgroundColor: '#BF0D3E',
-                    borderColor: '#002855',
+                    backgroundColor: '#eca400',
+                    borderColor: '#820263',
                     borderWidth: 2
                 }]
             },
@@ -1146,15 +1158,15 @@
                     {
                         label: 'People Engaged',
                         data: data.voterServices.engaged,
-                        backgroundColor: '#0051A3',
-                        borderColor: '#002855',
+                        backgroundColor: '#820263',
+                        borderColor: '#820263',
                         borderWidth: 1
                     },
                     {
                         label: 'VBM Forms Provided',
                         data: data.voterServices.vbm,
-                        backgroundColor: '#BF0D3E',
-                        borderColor: '#8B1A32',
+                        backgroundColor: '#eca400',
+                        borderColor: '#d4890a',
                         borderWidth: 1
                     }
                 ]
@@ -1326,15 +1338,15 @@
             const tabContainer = document.getElementById('tabContainer');
             const tabs = [
                 { label: 'Overview', id: 'overview' },
-                { label: 'Speakers Bureau', id: 'speakers-bureau' },
-                { label: 'Education Action Team', id: 'education-action' },
-                { label: 'Voter Services', id: 'voter-services' },
-                { label: 'Event Planning', id: 'event-planning' },
-                { label: 'Membership', id: 'membership' },
-                { label: 'Hot Topics', id: 'hot-topics' },
-                { label: 'Editorial & Essays', id: 'editorial' },
                 { label: 'Board of Directors', id: 'board' },
-                { label: 'Vote 411', id: 'vote411' }
+                { label: 'Editorial & Essays', id: 'editorial' },
+                { label: 'Education Action Team', id: 'education-action' },
+                { label: 'Event Planning', id: 'event-planning' },
+                { label: 'Hot Topics', id: 'hot-topics' },
+                { label: 'Membership', id: 'membership' },
+                { label: 'Speakers Bureau', id: 'speakers-bureau' },
+                { label: 'Vote 411', id: 'vote411' },
+                { label: 'Voter Services', id: 'voter-services' }
             ];
 
             tabs.forEach((tab, index) => {
