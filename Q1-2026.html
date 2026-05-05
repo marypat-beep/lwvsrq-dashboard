@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LWVSRQ Q1 2026 Performance Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -412,7 +412,7 @@
                 </div>
                 <div class="kpi-card alt">
                     <div class="kpi-label">Total People Reached</div>
-                    <div class="kpi-value">332</div>
+                    <div class="kpi-value">269</div>
                     <div class="small-text">Events + Voter Services</div>
                 </div>
                 <div class="kpi-card">
@@ -424,6 +424,11 @@
                     <div class="kpi-label">New Members</div>
                     <div class="kpi-value">31</div>
                     <div class="small-text">Jan 1 – Mar 15, 2026</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Community Events</div>
+                    <div class="kpi-value">19</div>
+                    <div class="small-text">All teams combined</div>
                 </div>
             </div>
 
@@ -606,15 +611,15 @@
             <div class="kpi-container">
                 <div class="kpi-card">
                     <div class="kpi-label">Tabling Events</div>
-                    <div class="kpi-value">4</div>
+                    <div class="kpi-value">2</div>
                 </div>
                 <div class="kpi-card alt">
                     <div class="kpi-label">People Engaged</div>
-                    <div class="kpi-value">141</div>
+                    <div class="kpi-value">78</div>
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-label">VBM Forms Provided</div>
-                    <div class="kpi-value">30</div>
+                    <div class="kpi-value">20</div>
                 </div>
                 <div class="kpi-card alt">
                     <div class="kpi-label">Volunteer Hours</div>
@@ -653,11 +658,11 @@
                     </tr>
                     <tr>
                         <td style="padding: 8px;"><strong>Total VBM Forms Provided:</strong></td>
-                        <td style="padding: 8px; text-align: right;"><strong>30</strong></td>
+                        <td style="padding: 8px; text-align: right;"><strong>20</strong></td>
                     </tr>
                     <tr>
                         <td style="padding: 8px;"><strong>Total People Engaged:</strong></td>
-                        <td style="padding: 8px; text-align: right;"><strong>141</strong></td>
+                        <td style="padding: 8px; text-align: right;"><strong>78</strong></td>
                     </tr>
                 </table>
             </div>
@@ -853,6 +858,66 @@
             </div>
         </div>
 
+        <!-- COMMUNICATIONS TAB -->
+        <div class="tab-content" id="tab-communications">
+            <h2 class="section-header">Communications</h2>
+
+            <!-- YouTube Section -->
+            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">YouTube</h3>
+            <div class="kpi-container">
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Videos</div>
+                    <div class="kpi-value">7</div>
+                </div>
+                <div class="kpi-card alt">
+                    <div class="kpi-label">Q1 Unique Viewers</div>
+                    <div class="kpi-value">94</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Top Video Viewers</div>
+                    <div class="kpi-value">51</div>
+                    <div class="small-text">Beyond the Classroom</div>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-wrapper" style="grid-column: 1 / -1;">
+                    <h3>Unique Viewers by Month</h3>
+                    <canvas id="chart-youtube-monthly"></canvas>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <h3>Video Performance – Q1 2026</h3>
+                <table id="youtube-table">
+                    <thead>
+                        <tr>
+                            <th>Video Title</th>
+                            <th>Published</th>
+                            <th>Jan</th>
+                            <th>Feb</th>
+                            <th>Mar</th>
+                            <th>Q1 Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="youtube-table-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Newsletter/Email Section - Coming Q2 -->
+            <h3 style="color: #820263; margin-top: 40px; margin-bottom: 15px;">Newsletter / Email</h3>
+            <div class="note-box">
+                <strong>Coming Q2 2026:</strong> Email campaign metrics including open rates, click rates, and subscriber growth.
+            </div>
+
+            <!-- Social Media Section - Coming Q2 -->
+            <h3 style="color: #820263; margin-top: 40px; margin-bottom: 15px;">Social Media</h3>
+            <div class="note-box">
+                <strong>Coming Q2 2026:</strong> Social media engagement, follower growth, and impressions by platform.
+            </div>
+        </div>
+
     </div>
 
     <footer>
@@ -865,7 +930,7 @@
         const data = {
             overview: {
                 volunteerHours: 234.75,
-                peopleReached: 332,
+                peopleReached: 269,
                 activeTeams: 10,
                 newMembers: 31
             },
@@ -889,9 +954,9 @@
                 values: [44, 40, 31, 27, 35, 14]
             },
             voterServices: {
-                labels: ['Jan 19 Community Event', 'Jan 22 Speakers Bureau Event', 'Jan 19 Community Event #2', 'Jan 22 Speakers Bureau Event #2'],
-                engaged: [30, 48, 15, 48],
-                vbm: [10, 10, 0, 10]
+                labels: ['Jan 19 Community Event', 'Jan 22 Speakers Bureau Event'],
+                engaged: [30, 48],
+                vbm: [10, 10]
             },
             teams: [
                 {
@@ -911,8 +976,8 @@
                 {
                     id: 'voter-services',
                     name: 'Voter Services',
-                    activities: 4,
-                    peopleReached: 141,
+                    activities: 2,
+                    peopleReached: 78,
                     hours: 57.50
                 },
                 {
@@ -997,8 +1062,6 @@
 
         const voterServicesData = [
             { date: 'Jan 19', type: 'Community', online: 0, hardcopy: 0, vbmProvided: 10, engaged: 30 },
-            { date: 'Jan 22', type: 'Speakers Bureau', online: 0, hardcopy: 0, vbmProvided: 10, engaged: 48 },
-            { date: 'Jan 19', type: 'Community', online: 0, hardcopy: 0, vbmProvided: 0, engaged: 15 },
             { date: 'Jan 22', type: 'Speakers Bureau', online: 0, hardcopy: 0, vbmProvided: 10, engaged: 48 }
         ];
 
@@ -1032,6 +1095,7 @@
         }
 
         // ===== CHART CONFIGURATION =====
+        try {
         const chartColors = ['#521c50', '#eca400', '#820263', '#eca400', '#820263', '#d4890a', '#E8D48A'];
 
         // Chart 1: Hours by Team
@@ -1083,14 +1147,15 @@
                 labels: data.hoursByCategory.labels,
                 datasets: [{
                     data: data.hoursByCategory.values,
-                    backgroundColor: ['#820263', '#eca400', '#9a1a75'],
+                    backgroundColor: ['#4a0138', '#eca400', '#c96bb5'],
                     borderColor: '#FFFFFF',
-                    borderWidth: 2
+                    borderWidth: 3
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
+                aspectRatio: 1,
                 plugins: {
                     legend: {
                         position: 'bottom',
@@ -1190,6 +1255,7 @@
                 }
             }
         });
+        } catch(e) { console.error('Chart.js failed to load:', e); }
 
         // ===== TABLE POPULATION =====
         function populateSummaryTable() {
@@ -1331,6 +1397,68 @@
                 </tr>
             `).join('');
             makeTableSortable('editorial-table');
+
+            // YouTube
+            const youtubeData = [
+                { title: 'Beyond the Classroom: Key Issues Shaping Education in Sarasota County', published: 'Mar 5, 2026', jan: 0, feb: 0, mar: 51, total: 51 },
+                { title: 'Project 180: Effectively Reintegrating Returning Citizens', published: 'Mar 4, 2026', jan: 0, feb: 0, mar: 10, total: 10 },
+                { title: 'March 2026 Sarasota Chapter Update', published: 'Mar 25, 2026', jan: 0, feb: 0, mar: 8, total: 8 },
+                { title: 'LWVSRQ Chapter Update 26 02 23', published: 'Mar 5, 2026', jan: 0, feb: 0, mar: 8, total: 8 },
+                { title: 'What Is Redistricting and Why is it Important to You?', published: 'Feb 17, 2022', jan: 2, feb: 1, mar: 5, total: 8 },
+                { title: 'Why the League of Women Voters of Florida Opposes Mid-Cycle Redistricting', published: 'Nov 7, 2025', jan: 1, feb: 3, mar: 1, total: 5 },
+                { title: 'The Digital Democracy Project: We Have the Technology. You Have the Power!', published: 'Oct 7, 2025', jan: 1, feb: 3, mar: 0, total: 4 }
+            ];
+
+            const youtubeBody = document.getElementById('youtube-table-body');
+            youtubeBody.innerHTML = youtubeData.map(row => `
+                <tr>
+                    <td>${row.title}</td>
+                    <td>${row.published}</td>
+                    <td class="text-center">${row.jan}</td>
+                    <td class="text-center">${row.feb}</td>
+                    <td class="text-center">${row.mar}</td>
+                    <td class="text-center font-bold">${row.total}</td>
+                </tr>
+            `).join('');
+            makeTableSortable('youtube-table');
+
+            // YouTube Monthly Chart
+            try {
+                const ctxYT = document.getElementById('chart-youtube-monthly').getContext('2d');
+                new Chart(ctxYT, {
+                    type: 'bar',
+                    data: {
+                        labels: ['January', 'February', 'March'],
+                        datasets: [{
+                            label: 'Unique Viewers',
+                            data: [4, 7, 83],
+                            backgroundColor: ['#c96bb5', '#820263', '#4a0138'],
+                            borderColor: '#820263',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y + ' unique viewers';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { stepSize: 10 }
+                            }
+                        }
+                    }
+                });
+            } catch(e) { console.error('YouTube chart failed:', e); }
         }
 
         // ===== TAB NAVIGATION =====
@@ -1339,6 +1467,7 @@
             const tabs = [
                 { label: 'Overview', id: 'overview' },
                 { label: 'Board of Directors', id: 'board' },
+                { label: 'Communications', id: 'communications' },
                 { label: 'Editorial & Essays', id: 'editorial' },
                 { label: 'Education Action Team', id: 'education-action' },
                 { label: 'Event Planning', id: 'event-planning' },
