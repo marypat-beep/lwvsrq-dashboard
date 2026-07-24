@@ -1,1544 +1,3161 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LWVSRQ Q1 2026 Performance Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Merriweather', 'Times New Roman', Georgia, serif;
-            background-color: #f8f2f6;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            background: linear-gradient(135deg, #820263 0%, #9a1a75 100%);
-            color: white;
-            padding: 40px 20px;
-            margin-bottom: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        header h1 {
-            font-family: 'Lato', 'Open Sans', Arial, sans-serif;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 900;
-            letter-spacing: -0.5px;
-        }
-
-        header p {
-            font-family: 'Lato', 'Open Sans', Arial, sans-serif;
-            font-size: 1.1em;
-            font-weight: 300;
-            opacity: 0.95;
-        }
-
-
-        /* LWV Brand Fonts */
-        h1, h2, h3, .section-header, .kpi-label, .kpi-value, .tab-button, th {
-            font-family: 'Lato', 'Open Sans', Arial, sans-serif;
-        }
-
-        /* Tab Navigation */
-        .tab-container {
-            display: flex;
-            background: white;
-            border-bottom: 3px solid #eca400;
-            margin-bottom: 30px;
-            border-radius: 8px 8px 0 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            overflow-x: auto;
-        }
-
-        .tab-button {
-            flex: 1;
-            padding: 16px 20px;
-            background: #f8f2f6;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            color: #333;
-            transition: all 0.3s ease;
-            text-align: center;
-            white-space: nowrap;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -3px;
-        }
-
-        .tab-button:hover {
-            background: #f0e0eb;
-            color: #820263;
-        }
-
-        .tab-button.active {
-            background: white;
-            color: #820263;
-            font-weight: 700;
-            border-bottom-color: #eca400;
-        }
-
-        /* KPI Cards */
-        .kpi-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .kpi-card {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border-left: 5px solid #eca400;
-            text-align: center;
-        }
-
-        .kpi-card.alt {
-            border-left-color: #820263;
-        }
-
-        .kpi-label {
-            font-size: 0.95em;
-            color: #666;
-            margin-bottom: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .kpi-value {
-            font-size: 2.5em;
-            font-weight: 700;
-            color: #820263;
-        }
-
-        .kpi-card.alt .kpi-value {
-            color: #521c50;
-        }
-
-        /* Content Tabs */
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Charts */
-        .charts-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .chart-wrapper {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .chart-wrapper h3 {
-            color: #820263;
-            margin-bottom: 20px;
-            font-size: 1.3em;
-            border-bottom: 2px solid #f0e0eb;
-            padding-bottom: 10px;
-        }
-
-        .chart-wrapper canvas {
-            max-height: 400px;
-        }
-
-        /* Tables */
-        .table-wrapper {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            margin-bottom: 30px;
-        }
-
-        .table-wrapper h3 {
-            color: white;
-            background: #820263;
-            padding: 15px 20px;
-            margin: 0;
-            font-size: 1.2em;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: #f0e0eb;
-            border-bottom: 2px solid #eca400;
-        }
-
-        th {
-            padding: 15px 12px;
-            text-align: left;
-            font-weight: 700;
-            color: #820263;
-            cursor: pointer;
-            user-select: none;
-            white-space: nowrap;
-            transition: background-color 0.2s ease;
-        }
-
-        th:hover {
-            background: #e0c4d6;
-        }
-
-        th::after {
-            content: ' ↕';
-            color: #820263;
-            font-size: 0.8em;
-            margin-left: 4px;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #f8f2f6;
-        }
-
-        tbody tr:hover {
-            background: #f8f2f6;
-        }
-
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* Summary Table */
-        .summary-table {
-            margin-top: 40px;
-        }
-
-        /* Notes */
-        .note-box {
-            background: #f0e0eb;
-            border-left: 4px solid #eca400;
-            padding: 15px 20px;
-            border-radius: 4px;
-            margin: 20px 0;
-            font-size: 0.95em;
-            color: #333;
-        }
-
-        /* Section Headers */
-        .section-header {
-            color: #820263;
-            font-size: 1.5em;
-            font-weight: 700;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #eca400;
-            padding-bottom: 10px;
-        }
-
-        /* Footer */
-        footer {
-            background: #820263;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 50px;
-            font-size: 0.9em;
-            border-radius: 8px;
-        }
-
-        /* Print Styles */
-        @media print {
-            .tab-container {
-                display: none;
-            }
-
-            header {
-                page-break-after: avoid;
-            }
-
-            .tab-content {
-                display: block !important;
-                page-break-inside: avoid;
-            }
-
-            .page-break {
-                page-break-before: always;
-            }
-
-            body {
-                background: white;
-            }
-
-            .chart-wrapper,
-            .table-wrapper {
-                page-break-inside: avoid;
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8em;
-            }
-
-            .charts-container {
-                grid-template-columns: 1fr;
-            }
-
-            .tab-button {
-                flex: 0 1 auto;
-                padding: 12px 15px;
-                font-size: 0.9em;
-            }
-
-            table {
-                font-size: 0.9em;
-            }
-
-            th, td {
-                padding: 10px 8px;
-            }
-
-            .kpi-value {
-                font-size: 2em;
-            }
-        }
-
-        /* Utility Classes */
-        .text-center {
-            text-align: center;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .font-bold {
-            font-weight: 700;
-        }
-
-        .color-navy {
-            color: #820263;
-        }
-
-        .color-red {
-            color: #eca400;
-        }
-
-        .small-text {
-            font-size: 0.85em;
-            color: #666;
-        }
-
-        .nr-value {
-            color: #999;
-            font-style: italic;
-            font-size: 0.9em;
-        }
-
-        .data-legend {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 6px 14px;
-            background: #f0e0eb;
-            border-radius: 4px;
-            font-size: 0.85em;
-            color: #555;
-        }
-
-        .data-legend .nr-value {
-            font-weight: 600;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LWVSRQ Q2 2026 Performance Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Merriweather', 'Times New Roman', Georgia, serif;
+    background: #f8f2f6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+  }
+  h1, h2, h3, h4, th, .kpi-label, .kpi-value, button, label { font-family: 'Lato', 'Open Sans', Arial, sans-serif; }
+  header {
+    background: linear-gradient(135deg, #820263 0%, #9a1a75 100%);
+    color: white;
+    padding: 30px 40px 25px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  }
+  header h1 { font-weight: 900; letter-spacing: -0.5px; margin: 0 0 6px; font-size: 30px; }
+  header p { font-weight: 300; margin: 0; opacity: 0.95; font-size: 15px; }
+  .tab-bar {
+    display: flex;
+    flex-wrap: wrap;
+    background: white;
+    border-bottom: 3px solid #eca400;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .tab-bar button {
+    background: none;
+    border: none;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #521c50;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-bar button:hover { color: #820263; }
+  .tab-bar button.active {
+    color: #820263;
+    font-weight: 700;
+    border-bottom: 3px solid #eca400;
+  }
+  main { padding: 25px 40px 60px; max-width: 1400px; margin: 0 auto; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .section-title {
+    font-size: 22px;
+    color: #820263;
+    border-bottom: 3px solid #eca400;
+    padding-bottom: 8px;
+    margin: 30px 0 18px;
+    font-weight: 700;
+  }
+  .section-title:first-child { margin-top: 0; }
+  .note-box {
+    background: #f0e0eb;
+    border-left: 4px solid #eca400;
+    padding: 12px 18px;
+    margin: 16px 0;
+    border-radius: 3px;
+  }
+  .note-box strong { color: #820263; }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin: 18px 0 30px;
+  }
+  .kpi-card {
+    background: white;
+    padding: 20px;
+    border-left: 5px solid #eca400;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .kpi-card:nth-child(2n) { border-left-color: #820263; }
+  .kpi-label { font-size: 11px; font-weight: 700; color: #521c50; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-value { font-size: 32px; font-weight: 900; color: #820263; margin: 6px 0 4px; font-family: 'Lato', sans-serif; }
+  .kpi-card:nth-child(2n) .kpi-value { color: #521c50; }
+  .kpi-delta { font-size: 12px; font-weight: 600; }
+  .delta-up { color: #2a7a2a; }
+  .delta-down { color: #b34a4a; }
+  .delta-flat { color: #666; }
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
+  .chart-card {
+    background: white;
+    padding: 18px 20px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .chart-card h3 {
+    margin: 0 0 12px;
+    color: #820263;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .chart-wrap { position: relative; height: 300px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin: 12px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  th {
+    background: #f0e0eb;
+    color: #820263;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom: 2px solid #eca400;
+    cursor: pointer;
+    user-select: none;
+  }
+  th:hover { background: #e6cfdd; }
+  th.sort-asc::after { content: ' \25b2'; font-size: 10px; }
+  th.sort-desc::after { content: ' \25bc'; font-size: 10px; }
+  td { padding: 9px 12px; border-bottom: 1px solid #f0e0eb; font-size: 13px; }
+  tr:nth-child(even) td { background: #faf6f9; }
+  .nr-value { color: #999; font-style: italic; font-size: 0.9em; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  footer {
+    background: #820263;
+    color: white;
+    padding: 20px 40px;
+    text-align: center;
+    font-size: 12px;
+    margin-top: 40px;
+  }
+  footer p { margin: 4px 0; }
+  .data-legend {
+    background: #f0e0eb;
+    color: #521c50;
+    padding: 8px 16px;
+    text-align: center;
+    font-size: 12px;
+    font-family: 'Lato', sans-serif;
+  }
+  .subhead { color: #521c50; font-weight: 700; font-family: 'Lato', sans-serif; margin: 20px 0 6px; }
+  .commentary {
+    background: #f0e0eb;
+    border-left: 4px solid #eca400;
+    padding: 14px 20px;
+    margin: 16px 0;
+    font-style: italic;
+  }
+  .commentary strong { font-style: normal; color: #820263; }
+  .metric-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #ddd; font-size: 14px; }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-row span:first-child { color: #521c50; }
+  .metric-row span:last-child { font-weight: 700; color: #820263; font-family: 'Lato', sans-serif; }
+  @media print {
+    .tab-bar { display: none; }
+    .tab-content { display: block !important; page-break-before: always; }
+    .tab-content:first-of-type { page-break-before: auto; }
+    body { background: white; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>LWVSRQ Performance Dashboard</h1>
-            <p>Q1 2026 (January – March 2026)</p>
-        </header>
+<header>
+  <h1>LWVSRQ Q2 2026 Performance Dashboard</h1>
+  <p>Reporting period: April 1 &ndash; June 30, 2026 &nbsp;|&nbsp; With Q1 comparison</p>
+</header>
 
-        <!-- Tab Navigation -->
-        <div class="tab-container" id="tabContainer"></div>
+<nav class="tab-bar" id="tabBar"></nav>
 
-        <!-- OVERVIEW TAB -->
-        <div class="tab-content active" id="tab-overview">
-            <!-- KPI Cards -->
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Volunteer Hours</div>
-                    <div class="kpi-value">234.75</div>
-                    <div class="small-text">Q1 2026</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">Total People Reached</div>
-                    <div class="kpi-value">269</div>
-                    <div class="small-text">Events + Voter Services</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Active Teams Reporting</div>
-                    <div class="kpi-value">10</div>
-                    <div class="small-text">Teams with data</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">New Members</div>
-                    <div class="kpi-value">31</div>
-                    <div class="small-text">Jan 1 – Mar 15, 2026</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Community Events</div>
-                    <div class="kpi-value">19</div>
-                    <div class="small-text">All teams combined</div>
-                </div>
-            </div>
+<main id="mainContent"></main>
 
-            <!-- Charts -->
-            <div class="charts-container">
-                <div class="chart-wrapper">
-                    <h3>Volunteer Hours by Team</h3>
-                    <canvas id="chart-hours-by-team"></canvas>
-                </div>
-                <div class="chart-wrapper">
-                    <h3>Volunteer Hours by Category</h3>
-                    <canvas id="chart-hours-by-category"></canvas>
-                </div>
-            </div>
+<div class="data-legend"><span class="nr-value">N/R</span> = Not Reported (data was not submitted; distinct from a confirmed zero)</div>
+<footer>
+  <p>LWVSRQ Q2 2026 Performance Dashboard | Data as of 2026-07-23 | Generated for Board of Directors</p>
+</footer>
 
-            <div class="charts-container">
-                <div class="chart-wrapper" style="grid-column: 1 / -1;">
-                    <h3>Event Attendance</h3>
-                    <canvas id="chart-event-attendance"></canvas>
-                </div>
-            </div>
+<script>
+const DATA = {
+  "q1": {
+    "hours_by_team": {
+      "Board of Directors": 691.0,
+      "Candidate Forums": 64.0,
+      "Communications": 390.5,
+      "Development": 0,
+      "Editorial & Essays": 27.5,
+      "Education Action Team": 80.0,
+      "Events Planning": 52.0,
+      "GOTV Partner Toolkit": 0,
+      "Hot Topics": 54.0,
+      "League in Action": 20.0,
+      "Membership": 70.0,
+      "Natural Resources": 40.0,
+      "Nominating Committee": 4.25,
+      "Observer Corps": 33.0,
+      "Organizational Assessment & Impact": 65.5,
+      "Outreach": 2.0,
+      "Rallies": 43.0,
+      "Speakers Bureau": 80.0,
+      "Vote 411": 27.75,
+      "Voter Services": 368.0,
+      "Young Adult Engagement": 120.5
+    },
+    "hours_by_cat": {
+      "Election": 585.5,
+      "Non-Election": 918.75,
+      "Admin": 728.75
+    },
+    "total_hours": 2233.0,
+    "people_reached": 484.0,
+    "active_teams": 19,
+    "new_members": 12.0
+  },
+  "q2": {
+    "hours_by_team": {
+      "Board of Directors": 603.5,
+      "Candidate Forums": 32.0,
+      "Communications": 124.0,
+      "Development": 192.0,
+      "Editorial & Essays": 0,
+      "Education Action Team": 89.0,
+      "Events Planning": 78.0,
+      "GOTV Partner Toolkit": 220.0,
+      "Hot Topics": 21.0,
+      "League in Action": 0,
+      "Membership": 27.5,
+      "Natural Resources": 12.0,
+      "Nominating Committee": 4.0,
+      "Observer Corps": 98.0,
+      "Organizational Assessment & Impact": 30.25,
+      "Outreach": 26.0,
+      "Rallies": 1.0,
+      "Speakers Bureau": 184.25,
+      "Vote 411": 0,
+      "Voter Services": 250.66666666666666,
+      "Young Adult Engagement": 48.0
+    },
+    "hours_by_cat": {
+      "Election": 952.8333333333333,
+      "Non-Election": 488.8333333333333,
+      "Admin": 599.5
+    },
+    "total_hours": 2041.1666666666665,
+    "people_reached": 1567.0,
+    "active_teams": 18,
+    "new_members": 56.0
+  },
+  "metrics": {
+    "voter_services": {
+      "Q1": {
+        "people_engaged": 231.0,
+        "online_reg": 6.0,
+        "hard_copy": 0,
+        "vbm_given": 41.0,
+        "count": 7
+      },
+      "Q2": {
+        "people_engaged": 259.0,
+        "online_reg": 2.0,
+        "hard_copy": 8.0,
+        "vbm_given": 17.0,
+        "count": 10
+      }
+    },
+    "speakers_bureau": {
+      "Q1": {
+        "live_attendees": 81.0,
+        "virtual_attendees": 0,
+        "count": 3
+      },
+      "Q2": {
+        "live_attendees": 443.0,
+        "virtual_attendees": 20.0,
+        "count": 11
+      }
+    },
+    "education_action_team": {
+      "Q1": {
+        "people_reached": 0,
+        "yvote_schools": 4.0,
+        "yvote_students": 4.0,
+        "yvote_prizes": 0,
+        "count": 15
+      },
+      "Q2": {
+        "people_reached": 225.0,
+        "yvote_schools": 0,
+        "yvote_students": 0,
+        "yvote_prizes": 0,
+        "count": 31
+      }
+    },
+    "membership": {
+      "Q1": {
+        "attending": 47.0,
+        "new_members": 12.0,
+        "count": 6
+      },
+      "Q2": {
+        "attending": 68.0,
+        "new_members": 56.0,
+        "count": 8
+      }
+    },
+    "gotv": {
+      "Q1": {
+        "count": 0,
+        "active_deployments": 0
+      },
+      "Q2": {
+        "count": 48,
+        "active_deployments": 1
+      }
+    },
+    "candidate_forums": {
+      "Q1": {
+        "live": 0,
+        "virtual": 0,
+        "views_30day": 0,
+        "count": 0
+      },
+      "Q2": {
+        "live": 181.0,
+        "virtual": 107.0,
+        "views_30day": 264.0,
+        "count": 3
+      }
+    },
+    "editorial_essays": {
+      "Q1": {
+        "count": 1
+      },
+      "Q2": {
+        "count": 0
+      }
+    },
+    "vote411": {
+      "Q1": {
+        "candidate_count": 0,
+        "count": 0
+      },
+      "Q2": {
+        "candidate_count": 100.0,
+        "count": 4
+      }
+    },
+    "social_media": {
+      "Q1": {
+        "reach": 0,
+        "engagement": 0,
+        "audience": 0,
+        "total_impressions": 0,
+        "total_engagement": 0,
+        "count": 0
+      },
+      "Q2": {
+        "reach": 46742.0,
+        "engagement": 2823.0,
+        "audience": 2010.0,
+        "total_impressions": 84262.0,
+        "total_engagement": 5054.0,
+        "count": 4
+      }
+    },
+    "rallies": {
+      "Q1": {
+        "attendance": 125.0,
+        "count": 1
+      },
+      "Q2": {
+        "attendance": 0,
+        "count": 0
+      }
+    },
+    "natural_resources": {
+      "Q1": {
+        "people_reached": 0,
+        "count": 0
+      },
+      "Q2": {
+        "people_reached": 0,
+        "count": 2
+      }
+    }
+  },
+  "details": {
+    "voter_services": [
+      {
+        "quarter": "Q1",
+        "date": "2026-01-19",
+        "event_type": "Tabling at a public (community) event",
+        "online_reg": null,
+        "hard_copy": null,
+        "vbm_given": 10.0,
+        "people_engaged": 30.0,
+        "unmet_needs": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-01-22",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": null,
+        "hard_copy": null,
+        "vbm_given": 10.0,
+        "people_engaged": 48.0,
+        "unmet_needs": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-01-22",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": null,
+        "hard_copy": null,
+        "vbm_given": 10.0,
+        "people_engaged": 48.0,
+        "unmet_needs": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-01-22",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": 6.0,
+        "hard_copy": null,
+        "vbm_given": 10.0,
+        "people_engaged": 30.0,
+        "unmet_needs": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-14",
+        "event_type": "Tabling at a public (community) event",
+        "online_reg": null,
+        "hard_copy": null,
+        "vbm_given": null,
+        "people_engaged": 34.0,
+        "unmet_needs": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-03-28",
+        "event_type": "Tabling at a public (community) event",
+        "online_reg": null,
+        "hard_copy": null,
+        "vbm_given": 1.0,
+        "people_engaged": 15.0,
+        "unmet_needs": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-03-30",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": null,
+        "hard_copy": null,
+        "vbm_given": null,
+        "people_engaged": 26.0,
+        "unmet_needs": "distributed Vote101 cards from SoE office ",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-02",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": null,
+        "hard_copy": 2.0,
+        "vbm_given": 6.0,
+        "people_engaged": 21.0,
+        "unmet_needs": "0. (checked voter status for 53 people!)",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-15",
+        "event_type": "Tabling at a public (community) event",
+        "online_reg": 1.0,
+        "hard_copy": null,
+        "vbm_given": null,
+        "people_engaged": 54.0,
+        "unmet_needs": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-15",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": null,
+        "hard_copy": null,
+        "vbm_given": null,
+        "people_engaged": 72.0,
+        "unmet_needs": "(most voters used QR codes to request VBM, mostly; no one checked their voter status)",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-18",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": 1.0,
+        "hard_copy": null,
+        "vbm_given": null,
+        "people_engaged": 23.0,
+        "unmet_needs": "(2 people checked their voter status; 5 people picked up \"join the League\" booklets)",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-26",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": null,
+        "hard_copy": 2.0,
+        "vbm_given": null,
+        "people_engaged": null,
+        "unmet_needs": "3 persons could not request Manatee VBM because that website was not working. ",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-26",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": null,
+        "hard_copy": null,
+        "vbm_given": 2.0,
+        "people_engaged": 15.0,
+        "unmet_needs": "Could not help 1 Manatee Cty resident because the Manatee SoE's website was down; \n(checked voter status 9; checked VBM registration online 1)",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-02",
+        "event_type": "Tabling at a public (community) event",
+        "online_reg": null,
+        "hard_copy": null,
+        "vbm_given": 1.0,
+        "people_engaged": 32.0,
+        "unmet_needs": "(checked voter status on 2; took \"join the League\" pamphlet - 1: ",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-11",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": null,
+        "hard_copy": 2.0,
+        "vbm_given": 8.0,
+        "people_engaged": 23.0,
+        "unmet_needs": "(17 checked their voter registration)",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-14",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": null,
+        "hard_copy": 2.0,
+        "vbm_given": null,
+        "people_engaged": 15.0,
+        "unmet_needs": "1 (no reason given) (17 people checked online their voter registration and/or vote by mail registration)",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-17",
+        "event_type": "Tabling at a Speakers Bureau event",
+        "online_reg": null,
+        "hard_copy": null,
+        "vbm_given": null,
+        "people_engaged": 4.0,
+        "unmet_needs": "This group, Advocates for Constitutional Values, is well versed  in voting laws. Feedback was to send a smaller set of registrars to this group next time.  We passed out 4 vote411.org cards and had 4 folks interested in joining the League.",
+        "notes": null
+      }
+    ],
+    "speakers_bureau": [
+      {
+        "quarter": "Q1",
+        "date": "2026-01-22",
+        "event_title": "Med-Decade Redistricting",
+        "event_host": "Aviva Senior Living",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "Jeff Kraus",
+        "audience_type": "Seniors",
+        "live_attendees": 40.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-03-30",
+        "event_title": "Mid Decade Redistricting",
+        "event_host": "Ringling College",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "Jeff Kraus",
+        "audience_type": "Teen/Young Adults",
+        "live_attendees": 14.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-02",
+        "event_title": "Mid Decade Redistricting",
+        "event_host": "Plymouth Harbor Sarasota Bay",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "Jeff Kraus",
+        "audience_type": "Seniors",
+        "live_attendees": 35.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-03-12",
+        "event_title": "Separating Fact from Fiction",
+        "event_host": "Philanthropic Education Organization",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "Ruth Brandwein",
+        "audience_type": "General Audience",
+        "live_attendees": 27.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-18",
+        "event_title": "Advocacy: Making It Happen ",
+        "event_host": "Lee Wetherington Boys & Girls Club",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "John Scibak",
+        "audience_type": "Teen/Young Adults",
+        "live_attendees": 7.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-18",
+        "event_title": "Mid Decade Redistricting",
+        "event_host": "Venice Area Democratic Club",
+        "region": "South County (locations south of Clark Road)",
+        "speaker": "Jeff Kraus",
+        "audience_type": "General Audience",
+        "live_attendees": 119.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-15",
+        "event_title": "Advocacy: Making It Happen",
+        "event_host": "Ringling College",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "John Scibak",
+        "audience_type": "Teen/Young Adults",
+        "live_attendees": 11.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-19",
+        "event_title": "Open Primaries: One Person One Vote",
+        "event_host": "Advocates for Constitutional Valurs",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "Vilia Johnson",
+        "audience_type": "General Audience",
+        "live_attendees": 25.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-26",
+        "event_title": "The Fight for Women's Suffrage",
+        "event_host": "Unitarian Universalists of Sarasota",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "Gina Finnegan",
+        "audience_type": "General Audience",
+        "live_attendees": 34.0,
+        "virtual_attendees": 20.0,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-11",
+        "event_title": "Protect Your Vote: From 1789 to 2026 FL Voter ID Act",
+        "event_host": "Plymouth Harbor, Caryn Freis",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "Barbara Ryder",
+        "audience_type": "Seniors",
+        "live_attendees": 40.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-14",
+        "event_title": "Protect Your Vote: from 1789 to 2026 FL Voter ID Act",
+        "event_host": "Aviva -  Marie Leonardo",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "Barbara Ryder",
+        "audience_type": "Seniors",
+        "live_attendees": 50.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-11",
+        "event_title": " Protecting your voting rights",
+        "event_host": "Plymouth Harbor, Caryn Freis",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "Barbara Ryder",
+        "audience_type": "Seniors",
+        "live_attendees": 40.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-14",
+        "event_title": "Protect your voting rights: 1789 to 2026 FL Voter ID Act",
+        "event_host": "Aviva, Maria Leonardo",
+        "region": "North County (locations north of Clark Road)",
+        "speaker": "Barbara Ryder",
+        "audience_type": "Seniors",
+        "live_attendees": 50.0,
+        "virtual_attendees": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-21",
+        "event_title": "Recent Voter Suppresion Laws in Florida",
+        "event_host": "Heritage Pines Democratic Club (Hudson, FL)",
+        "region": "Pasco County, FL",
+        "speaker": "Barbara Ryder",
+        "audience_type": null,
+        "live_attendees": 32.0,
+        "virtual_attendees": null,
+        "notes": null
+      }
+    ],
+    "education_action_team": [
+      {
+        "quarter": "Q1",
+        "date": "2026-02-01",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Distribution of School Choice Flyers (TIGER BAY) ",
+        "counterpart": "We sent emails and contacted legislators in response to Action Alert sent on this date.",
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-06",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Voucher Legislation Updates",
+        "counterpart": "Florida Policy Institute",
+        "format": "Zoom",
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-05",
+        "activity_type": "Hosted Event",
+        "title_or_topic": " School Choice",
+        "counterpart": null,
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-17",
+        "activity_type": "School Board Observation",
+        "title_or_topic": "School Board meeting observation",
+        "counterpart": null,
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-20",
+        "activity_type": "External Meeting",
+        "title_or_topic": "School Choice",
+        "counterpart": "Florida State Board of Education - virtual observer",
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-05",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Voucher advocacy strategies and progress of other Federal legislation ",
+        "counterpart": "Education Law Center - Public Funds for Public Schools Meeting",
+        "format": "Zoom webinar",
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-09",
+        "activity_type": "Hosted Event",
+        "title_or_topic": "Distribution of School Choice Brochures to all Libraries in Sarasota County",
+        "counterpart": null,
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-03",
+        "activity_type": "School Board Observation",
+        "title_or_topic": "School Board meeting observation",
+        "counterpart": null,
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": "We observed the School Board workshop",
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-06",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Schools of Hope advocacy strategies and progress of other legislation ",
+        "counterpart": "Families for Strong Public Schools",
+        "format": "ZOOM",
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-20",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Schools of Hope advocacy strategies and progress of other legislation ",
+        "counterpart": "Families for Strong Public Schools",
+        "format": "Zoom",
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-03-03",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Florida legislation updates/advocacy strategies   ((weekly meetings through the month)",
+        "counterpart": "Florida Education Association",
+        "format": "Zoom  (weekly meetings through the month)",
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-03-24",
+        "activity_type": "External Meeting",
+        "title_or_topic": "vouchers, school choice, parent enggement, sepration of church and state, student experience",
+        "counterpart": "Team",
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": 1.0,
+        "yvote_students": 1.0,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-10",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Florida legislation updates/advocacy strategies   ((weekly meetings through the month)",
+        "counterpart": "Florida Education Association",
+        "format": "ZOOM",
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": 1.0,
+        "yvote_students": 1.0,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-03-04",
+        "activity_type": "Hosted Event",
+        "title_or_topic": "Beyond the Classroom: Key Issues Shaping Education in Sarasota",
+        "counterpart": null,
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": 1.0,
+        "yvote_students": 1.0,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-03-24",
+        "activity_type": "School Board Observation",
+        "title_or_topic": "School Board meeting observation",
+        "counterpart": null,
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": 1.0,
+        "yvote_students": 1.0,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-13",
+        "activity_type": "External Meeting",
+        "title_or_topic": null,
+        "counterpart": "Education Action team",
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-21",
+        "activity_type": "School Board Observation",
+        "title_or_topic": "School Board meeting observation",
+        "counterpart": null,
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": "Yes",
+        "lwv_statement_topic": "Budget, Behavior of School Board members",
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-15",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Legislative Updates, especially Vouchers",
+        "counterpart": "Florida Policy Institute",
+        "format": "Zoom",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": "I have more activities to report but it doesn't seem like the system will allow me to do that."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-29",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Legislative Updates/Federal and State",
+        "counterpart": "Florida Policy Institute",
+        "format": "Zoom",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": "I have more activities to report but it doesn't seem like the system will allow me to do that."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-15",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Public Education Advocacy Initiatives",
+        "counterpart": "Families for Strong Public Schools",
+        "format": "Zoom",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": "I have more activities to report but it doesn't seem like the system will allow me to do that."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-12",
+        "activity_type": "External Meeting",
+        "title_or_topic": "The Voucher Program",
+        "counterpart": "Education Law Cenyrt",
+        "format": "Zoom",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": "I have more activities to report but it doesn't seem like the system will allow me to do that."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-07",
+        "activity_type": "Brochure / Flyer Distribution",
+        "title_or_topic": "Trifold Distribution on Voting for School Board Candidats",
+        "counterpart": "Tiger Bay",
+        "format": "In-person",
+        "people_reached": 100.0,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": "I have more activities to report but it doesn't seem like the system will allow me to do that."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-01",
+        "activity_type": "Brochure / Flyer Distribution",
+        "title_or_topic": "Distribution of flyer on voting for school board candidates",
+        "counterpart": "U U Sarasota",
+        "format": "In-person",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": "I have more activities to report but it doesn't seem like the system will allow me to do that."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-19",
+        "activity_type": "School Board Observation",
+        "title_or_topic": "School Board Meeting/Observer Corps",
+        "counterpart": "Sarasota District Schools",
+        "format": "In-person",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": "I have more activities to report but it doesn't seem like the system will allow me to do that."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-05",
+        "activity_type": "School Board Observation",
+        "title_or_topic": "Observing School Board Workshop",
+        "counterpart": "Sarasota District Schools",
+        "format": "Zoom",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": "I have more activities to report but it doesn't seem like the system will allow me to do that."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-14",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Rulemaking",
+        "counterpart": "State Board of Education",
+        "format": "Zoom",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": "I have more activities to report but it doesn't seem like the system will allow me to do that."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-26",
+        "activity_type": "External Meeting",
+        "title_or_topic": "School Board Candidate Forum",
+        "counterpart": "WSLR/Fogartyville",
+        "format": "In-person",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": "I have more activities to report but it doesn't seem like the system will allow me to do that."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-31",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Team Meeting",
+        "counterpart": "Florida Policy Institute",
+        "format": "Zoom",
+        "people_reached": 0.0,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-31",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Florida Education Legislation",
+        "counterpart": "Education Law Center",
+        "format": "Zoom",
+        "people_reached": 0.0,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-31",
+        "activity_type": "External Meeting",
+        "title_or_topic": "School Board Candidate Forums",
+        "counterpart": "Tiger Bay",
+        "format": "In-person",
+        "people_reached": 0.0,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-31",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Unknown",
+        "counterpart": "Families for Strong Public Schools",
+        "format": "Zoom",
+        "people_reached": 0.0,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-31",
+        "activity_type": "School Board Observation",
+        "title_or_topic": "Workshop",
+        "counterpart": "Sarasota School Board",
+        "format": "Zoom",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-31",
+        "activity_type": "School Board Observation",
+        "title_or_topic": "School Board Meeting",
+        "counterpart": "Sarasota County School Board",
+        "format": "In-person",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-14",
+        "activity_type": "Internal Team Meeting",
+        "title_or_topic": null,
+        "counterpart": null,
+        "format": "Zoom",
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-27",
+        "activity_type": "Internal Team Meeting",
+        "title_or_topic": null,
+        "counterpart": null,
+        "format": null,
+        "people_reached": null,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-27",
+        "activity_type": "Team Meeting",
+        "title_or_topic": "Bills review, contest discussion, candidate forums",
+        "counterpart": "Team",
+        "format": "Zoom",
+        "people_reached": 10.0,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-18",
+        "activity_type": "Meeting with Team members to consider moving ahead",
+        "title_or_topic": "Decision on YVote",
+        "counterpart": null,
+        "format": "Zoom",
+        "people_reached": 5.0,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-26",
+        "activity_type": "Preparation of Report Card for School Board",
+        "title_or_topic": "Completing and Submitting School board Report Card",
+        "counterpart": "Observation Corps submitted materials, it was summarized by a Team member, reviewed by Team Chair and LWVSRQ Co-President, and sent to School Board",
+        "format": "email",
+        "people_reached": null,
+        "lwv_spoke_publicly": "Yes",
+        "lwv_statement_topic": "Our Review of the May School Board Meeting",
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-04",
+        "activity_type": "Brochure / Flyer Distribution",
+        "title_or_topic": "Distributing Materials at Tiger Bay",
+        "counterpart": null,
+        "format": "In-person",
+        "people_reached": 100.0,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-23",
+        "activity_type": "LWVSRQ School Board Candidate Forum",
+        "title_or_topic": "LWVSRQ School Board Candidate Forum",
+        "counterpart": null,
+        "format": "In-person",
+        "people_reached": null,
+        "lwv_spoke_publicly": "Yes",
+        "lwv_statement_topic": "Rhonda and Vilia  informed the audience about the League",
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-24",
+        "activity_type": "LWVSRQ School Board Candidate Forum",
+        "title_or_topic": "LWVSRQ School Board Candidate Forum",
+        "counterpart": null,
+        "format": "In-person",
+        "people_reached": null,
+        "lwv_spoke_publicly": "Yes",
+        "lwv_statement_topic": "Rhonda and Vilia informed the public about the League",
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-02",
+        "activity_type": "School Board Observation",
+        "title_or_topic": "School Board Observation Corps - Board Workshop",
+        "counterpart": null,
+        "format": "Hybrid",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-16",
+        "activity_type": "School Board Observation",
+        "title_or_topic": "School Board Meeting Observation",
+        "counterpart": null,
+        "format": "Hybrid",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-22",
+        "activity_type": "Preparation of School Board Report Card & Submission to Board",
+        "title_or_topic": "Preparation of School Board Report Card & Submission to Board",
+        "counterpart": null,
+        "format": "Hybrid",
+        "people_reached": null,
+        "lwv_spoke_publicly": "Yes",
+        "lwv_statement_topic": "We submitted the RC to the School Board",
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-30",
+        "activity_type": "Internal Team Meeting",
+        "title_or_topic": "Review Team Activity; prepare for YVote Contest",
+        "counterpart": null,
+        "format": "Zoom",
+        "people_reached": 10.0,
+        "lwv_spoke_publicly": null,
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-17",
+        "activity_type": "YVote Contest Activity",
+        "title_or_topic": "Rubric drafts review",
+        "counterpart": null,
+        "format": "email",
+        "people_reached": null,
+        "lwv_spoke_publicly": "No",
+        "lwv_statement_topic": null,
+        "yvote_schools": null,
+        "yvote_students": null,
+        "yvote_prizes": null,
+        "notes": null
+      }
+    ],
+    "membership": [
+      {
+        "quarter": "Q1",
+        "date": "2026-01-31",
+        "event_name": "Members engagement and support",
+        "event_type": null,
+        "attending": 38.0,
+        "new_members": 12.0,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-21",
+        "event_name": "South County Lunch Meeting",
+        "event_type": null,
+        "attending": 16.0,
+        "new_members": 3.0,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-13",
+        "event_name": "Membership Committee Meeting",
+        "event_type": null,
+        "attending": 5.0,
+        "new_members": 3.0,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-01-14",
+        "event_name": "North County Lunch",
+        "event_type": "Luncheon",
+        "attending": null,
+        "new_members": null,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": "Entered for Elena"
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-01-28",
+        "event_name": "North County Mix & Mingle",
+        "event_type": "Mix & Mingle",
+        "attending": null,
+        "new_members": null,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": "Entered for Elena"
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-02-11",
+        "event_name": "North County Lunch",
+        "event_type": "Luncheon",
+        "attending": null,
+        "new_members": null,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": "Entered for Elena"
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-03-11",
+        "event_name": "North County Lunch",
+        "event_type": "Luncheon",
+        "attending": null,
+        "new_members": null,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": "Entered for Elena"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-04-15",
+        "event_name": "North County lunch",
+        "event_type": "Luncheon",
+        "attending": 10.0,
+        "new_members": 24.0,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": "Deb Starr co-chair will report on additional membership activities"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-13",
+        "event_name": "North County Lunch",
+        "event_type": "Luncheon",
+        "attending": 10.0,
+        "new_members": 24.0,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": "Deb Starr co-chair will report on additional membership activities"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-11",
+        "event_name": "South County Luncheon Meeting",
+        "event_type": "Luncheon",
+        "attending": 10.0,
+        "new_members": 1.0,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-16",
+        "event_name": "South County Lunch Meeting",
+        "event_type": "Luncheon",
+        "attending": 11.0,
+        "new_members": 1.0,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q1",
+        "date": "2026-03-17",
+        "event_name": "South County Lunch Meeting",
+        "event_type": "Luncheon",
+        "attending": 9.0,
+        "new_members": 0.0,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-08",
+        "event_name": "Membership Committee  Zoom Meeting",
+        "event_type": "Committee Meeting",
+        "attending": 5.0,
+        "new_members": null,
+        "churn_rate": null,
+        "retention_rate": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-11",
+        "event_name": "LWV Florida Membership Chairs Zoom",
+        "event_type": "LWV Florida Membership Chairs Zoom",
+        "attending": 1.0,
+        "new_members": 0.0,
+        "churn_rate": 0.0,
+        "retention_rate": 0.0,
+        "notes": null
+      }
+    ],
+    "candidate_forums": [
+      {
+        "quarter": "Q2",
+        "date": "2026-06-18",
+        "race": "County Commission District 2 & r",
+        "format": "Hybrid",
+        "live": 82.0,
+        "virtual": 29.0,
+        "views_30day": null,
+        "co_sponsors": "Sun last Searchlight",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-23",
+        "race": "Sarasota County School Board District 1 & 4",
+        "format": "Hybrid",
+        "live": 55.0,
+        "virtual": 49.0,
+        "views_30day": 115.0,
+        "co_sponsors": "Suncoast Searchlight",
+        "notes": "Total views are cumulative from the event date."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-24",
+        "race": "Sarasota County School Board District 5",
+        "format": "Hybrid",
+        "live": 44.0,
+        "virtual": 29.0,
+        "views_30day": 149.0,
+        "co_sponsors": "Suncoast Searchlight",
+        "notes": "Total views are cumulative from the event date."
+      }
+    ],
+    "gotv": [
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Toolkit Delivered",
+        "partner_org": "AAUW Sarasota",
+        "org_type": "Civic Organization",
+        "materials_shared": "Fuull Toolkit",
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Toolkit Delivered",
+        "partner_org": "AAUW Venice",
+        "org_type": "Civic Organization",
+        "materials_shared": "Entire Toolkit",
+        "geo_area": "South County (south of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Toolkit Delivered",
+        "partner_org": "Advocates for Constitutional Values",
+        "org_type": "Civic Organization",
+        "materials_shared": "Full Toolkit",
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Toolkit Delivered",
+        "partner_org": "ASLAH",
+        "org_type": "Civic Organization",
+        "materials_shared": "Entire Tooklit",
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Toolkit Delivered",
+        "partner_org": "Women's Resource Center",
+        "org_type": "Civic Organization",
+        "materials_shared": "Entire Toolkit",
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Initial Contact",
+        "partner_org": "ALSO Youth",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-16",
+        "stage": "Toolkit Delivered",
+        "partner_org": "NAACP",
+        "org_type": "Civic Organization",
+        "materials_shared": "Entire Toolkit",
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": "NAACP Charlotte County and LULAC were contacted at the Social Alliance for Democracy event. Follow-up Needed."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-16",
+        "stage": "Toolkit Delivered",
+        "partner_org": "SEE Alliance",
+        "org_type": "School",
+        "materials_shared": "Entire Toolkit",
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": "NAACP Charlotte County and LULAC were contacted at the Social Alliance for Democracy event. Follow-up Needed."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-16",
+        "stage": "Initial Contact",
+        "partner_org": "Temple Emanu-el",
+        "org_type": "Faith Community",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": "NAACP Charlotte County and LULAC were contacted at the Social Alliance for Democracy event. Follow-up Needed."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-16",
+        "stage": "Initial Contact",
+        "partner_org": "Patterson Foundation",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": "NAACP Charlotte County and LULAC were contacted at the Social Alliance for Democracy event. Follow-up Needed."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-16",
+        "stage": "Toolkit Delivered",
+        "partner_org": "WSLR",
+        "org_type": "Business",
+        "materials_shared": "Entire Toolkit",
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": "NAACP Charlotte County and LULAC were contacted at the Social Alliance for Democracy event. Follow-up Needed."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Toolkit Delivered",
+        "partner_org": "LWV Charlotte County",
+        "org_type": "Civic Organization",
+        "materials_shared": "Entire Toolkit",
+        "geo_area": "Out of county",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": "NAACP Charlotte County and LULAC were contacted at the Social Alliance for Democracy event. Follow-up Needed."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Toolkit Delivered",
+        "partner_org": "LWV Manatee County",
+        "org_type": "Civic Organization",
+        "materials_shared": "Entire Toolkit",
+        "geo_area": "Out of county",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": "NAACP Charlotte County and LULAC were contacted at the Social Alliance for Democracy event. Follow-up Needed."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Initial Contact",
+        "partner_org": "NAAP of Charlotte County",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "Out of county",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": "NAACP Charlotte County and LULAC were contacted at the Social Alliance for Democracy event. Follow-up Needed."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Initial Contact",
+        "partner_org": "LULAC",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "NAACP Charlotte County and LULAC were contacted at the Social Alliance for Democracy event. Follow-up Needed."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-13",
+        "stage": "Toolkit Delivered",
+        "partner_org": "Social Justice Alliance of FL Suncoast",
+        "org_type": "Coalition / Multi-org",
+        "materials_shared": "Entire Toolkit",
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": "Pending",
+        "notes": "Forwarded to 90 people"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-07",
+        "stage": "Toolkit Delivered",
+        "partner_org": "Solmart Media",
+        "org_type": "Business",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": "No",
+        "active_deployment": "Pending",
+        "notes": "Multiple contributors, Andrea Ginsky, Janet Kahn, Carol Papa"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-25",
+        "stage": "Initial Contact",
+        "partner_org": "Healthy Start Coalition of Sarasota County",
+        "org_type": "Coalition / Multi-org",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": "No",
+        "active_deployment": "Pending",
+        "notes": "Multiple contributors, Andrea Ginsky, Janet Kahn, Carol Papa"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-29",
+        "stage": "Initial Contact",
+        "partner_org": "Sarasota Bar Association",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple contributors, Andrea Ginsky, Janet Kahn, Carol Papa"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Jewish Federation Sarasota-Manatee",
+        "org_type": "Faith Community",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple contributors, Andrea Ginsky, Janet Kahn, Carol Papa"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-25",
+        "stage": "Initial Contact",
+        "partner_org": "Girls, Inc.",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple contributors, Andrea Ginsky, Janet Kahn, Carol Papa"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Toolkit Delivered",
+        "partner_org": "Bookstore1",
+        "org_type": "Business",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": "Yes",
+        "notes": "Multiple contributors, Andrea Ginsky, Janet Kahn, Carol Papa"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "State College of Florida",
+        "org_type": "School",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors: Vilia Johnson, Carol Papa, Andrea Ginsky"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Toolkit Delivered",
+        "partner_org": "LWV Manatee County",
+        "org_type": "Civic Organization",
+        "materials_shared": "Toolkit",
+        "geo_area": "Out of county",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors: Vilia Johnson, Carol Papa, Andrea Ginsky"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Toolkit Delivered",
+        "partner_org": "LWV Charlotte County",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "Out of county",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors: Vilia Johnson, Carol Papa, Andrea Ginsky"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "William G. and Marie Selby Foundation",
+        "org_type": "Business",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors: Vilia Johnson, Carol Papa, Andrea Ginsky"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Visit Sarasota",
+        "org_type": "Business",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors: Vilia Johnson, Carol Papa, Andrea Ginsky"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-29",
+        "stage": "Initial Contact",
+        "partner_org": "United Way of South Sarasota County",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "South County (south of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors: Vilia Johnson, Carol Papa, Andrea Ginsky"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "John & Mable Ringling Museum of Art",
+        "org_type": "Foundation",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-25",
+        "stage": "Initial Contact",
+        "partner_org": "Glasser/Schoenbaum Human Services Center",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-23",
+        "stage": "Initial Contact",
+        "partner_org": "Temple Emanu-el",
+        "org_type": "Faith Community",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-25",
+        "stage": "Initial Contact",
+        "partner_org": "The Patterson Foundation",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Siesta Key Chamber of Commerce",
+        "org_type": "Business",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Senior Friendship Center",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Sarasota Young Professionals Group",
+        "org_type": "Business",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Sarasota County Libraries",
+        "org_type": "Government",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Literacy Volunteers of South Sarasota County",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "South County (south of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Lakewood Ranch Business Alliance (LWRBA)",
+        "org_type": "Business",
+        "materials_shared": null,
+        "geo_area": null,
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Jewish Federation",
+        "org_type": "Faith Community",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Humane Society of Sarasota County (HSSC)",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Greater Sarasota Chamber of Commerce",
+        "org_type": "Business",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-15",
+        "stage": "Initial Contact",
+        "partner_org": "Forty Carrots Family Center",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-25",
+        "stage": "Initial Contact",
+        "partner_org": "Dreamers Academy",
+        "org_type": "School",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-26",
+        "stage": "Initial Contact",
+        "partner_org": "Downtown Sarasota Alliance (DSA)",
+        "org_type": "Business",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-25",
+        "stage": "Initial Contact",
+        "partner_org": "CreArte Latino Cultural Center",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": "Multiple Contributors"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-25",
+        "stage": "Initial Contact",
+        "partner_org": "Community Foundation of Sarasota County",
+        "org_type": "Foundation",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-25",
+        "stage": "Initial Contact",
+        "partner_org": "Arts & Cultural Alliance of Sarasota County",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "County-wide",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-25",
+        "stage": "Initial Contact",
+        "partner_org": "Art Center Sarasota",
+        "org_type": "Civic Organization",
+        "materials_shared": null,
+        "geo_area": "North County (north of Clark Road)",
+        "repeat_partner": null,
+        "active_deployment": null,
+        "notes": null
+      }
+    ],
+    "editorial_essays": [
+      {
+        "quarter": "Q1",
+        "date": "2026-02-16",
+        "activity_type": "Op/Ed Piece",
+        "publication": "Sarasota Herald Tribune",
+        "topic": "FL Legislature Documentary Proff of Citizenship/Voter Supression",
+        "notes": "(migrated from legacy form - author may be submitter)"
+      }
+    ],
+    "vote411": [
+      {
+        "quarter": "Q2",
+        "date": "2026-06-08",
+        "activity_type": "question development",
+        "race": null,
+        "candidate_count": 25.0,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-14",
+        "activity_type": "Candidate Outreach",
+        "race": null,
+        "candidate_count": 25.0,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-21",
+        "activity_type": "Race Added to Guide",
+        "race": null,
+        "candidate_count": 25.0,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-01",
+        "activity_type": "Guide Promotion Event",
+        "race": null,
+        "candidate_count": 25.0,
+        "notes": null
+      }
+    ],
+    "social_media": [
+      {
+        "quarter": "Q2",
+        "date": "2026-06-09",
+        "platform": "Instagram",
+        "reach": 2800.0,
+        "engagement": 310.0,
+        "audience": 350.0,
+        "total_impressions": null,
+        "total_engagement": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-05-31",
+        "platform": "Website",
+        "reach": 1899.0,
+        "engagement": null,
+        "audience": null,
+        "total_impressions": null,
+        "total_engagement": null,
+        "notes": null
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-30",
+        "platform": "Facebook",
+        "reach": 33543.0,
+        "engagement": 2091.0,
+        "audience": 1300.0,
+        "total_impressions": 42131.0,
+        "total_engagement": 2527.0,
+        "notes": "Posts also made on X, Bluesky and Linkedin"
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-30",
+        "platform": "Instagram",
+        "reach": 8500.0,
+        "engagement": 422.0,
+        "audience": 360.0,
+        "total_impressions": 42131.0,
+        "total_engagement": 2527.0,
+        "notes": "Posts also made on X, Bluesky and Linkedin"
+      }
+    ],
+    "rallies": [
+      {
+        "quarter": "Q1",
+        "date": "2026-02-14",
+        "theme": "Defending Democracy for 106 Years",
+        "organizer": "LWV-organized",
+        "attendance": 125.0,
+        "media_coverage": "Multiple",
+        "co_sponsors": null,
+        "notes": null
+      }
+    ],
+    "natural_resources": [
+      {
+        "quarter": "Q2",
+        "date": "2026-06-27",
+        "activity_type": "External Meeting",
+        "title_or_topic": "Invited tabling at NAACP Panel on Voting Rights Act",
+        "counterpart": "NAACP Sarasota County",
+        "format": "In-person",
+        "people_reached": null,
+        "lwv_testified": "Yes",
+        "testimony_topic": "LWVSRQ Co-President Vilia Johnson was a panel speaker",
+        "notes": " June 27th, mostly chatted with people and distributed materials; on Jun 28th helped voters check registration and vote-by-mail status plus gave them materials."
+      },
+      {
+        "quarter": "Q2",
+        "date": "2026-06-28",
+        "activity_type": "Meet and Greet hosted by Temple Emanu-el, Sarasota",
+        "title_or_topic": "Meeting school board candidates from Sarasota & Manatee counties",
+        "counterpart": null,
+        "format": "In-person",
+        "people_reached": null,
+        "lwv_testified": "No",
+        "testimony_topic": null,
+        "notes": " June 27th, mostly chatted with people and distributed materials; on Jun 28th helped voters check registration and vote-by-mail status plus gave them materials."
+      }
+    ]
+  },
+  "team_labels": {
+    "candidate_forums": "Candidate Forums",
+    "editorial_essays": "Editorial & Essays",
+    "education_action_team": "Education Action Team",
+    "events_planning": null,
+    "gotv": "GOTV Partner Toolkit",
+    "membership": "Membership",
+    "natural_resources": "Natural Resources",
+    "rallies": "Rallies",
+    "social_media": "Social Media",
+    "speakers_bureau": "Speakers Bureau",
+    "vote411": "Vote411",
+    "voter_services": "Voter Services"
+  },
+  "variance": [
+    {
+      "team": "Communications",
+      "q1": 390.5,
+      "q2": 124.0,
+      "delta": -266.5,
+      "pct": -68.24583866837388
+    },
+    {
+      "team": "GOTV Partner Toolkit",
+      "q1": 0,
+      "q2": 220.0,
+      "delta": 220.0,
+      "pct": null
+    },
+    {
+      "team": "Development",
+      "q1": 0,
+      "q2": 192.0,
+      "delta": 192.0,
+      "pct": null
+    },
+    {
+      "team": "Voter Services",
+      "q1": 368.0,
+      "q2": 250.66666666666666,
+      "delta": -117.33333333333334,
+      "pct": -31.884057971014496
+    },
+    {
+      "team": "Speakers Bureau",
+      "q1": 80.0,
+      "q2": 184.25,
+      "delta": 104.25,
+      "pct": 130.3125
+    },
+    {
+      "team": "Board of Directors",
+      "q1": 691.0,
+      "q2": 603.5,
+      "delta": -87.5,
+      "pct": -12.662807525325615
+    },
+    {
+      "team": "Young Adult Engagement",
+      "q1": 120.5,
+      "q2": 48.0,
+      "delta": -72.5,
+      "pct": -60.16597510373444
+    },
+    {
+      "team": "Observer Corps",
+      "q1": 33.0,
+      "q2": 98.0,
+      "delta": 65.0,
+      "pct": 196.96969696969697
+    },
+    {
+      "team": "Membership",
+      "q1": 70.0,
+      "q2": 27.5,
+      "delta": -42.5,
+      "pct": -60.71428571428571
+    },
+    {
+      "team": "Rallies",
+      "q1": 43.0,
+      "q2": 1.0,
+      "delta": -42.0,
+      "pct": -97.67441860465115
+    },
+    {
+      "team": "Organizational Assessment & Impact",
+      "q1": 65.5,
+      "q2": 30.25,
+      "delta": -35.25,
+      "pct": -53.81679389312977
+    },
+    {
+      "team": "Hot Topics",
+      "q1": 54.0,
+      "q2": 21.0,
+      "delta": -33.0,
+      "pct": -61.111111111111114
+    },
+    {
+      "team": "Candidate Forums",
+      "q1": 64.0,
+      "q2": 32.0,
+      "delta": -32.0,
+      "pct": -50.0
+    },
+    {
+      "team": "Natural Resources",
+      "q1": 40.0,
+      "q2": 12.0,
+      "delta": -28.0,
+      "pct": -70.0
+    },
+    {
+      "team": "Vote 411",
+      "q1": 27.75,
+      "q2": 0,
+      "delta": -27.75,
+      "pct": -100.0
+    },
+    {
+      "team": "Editorial & Essays",
+      "q1": 27.5,
+      "q2": 0,
+      "delta": -27.5,
+      "pct": -100.0
+    },
+    {
+      "team": "Events Planning",
+      "q1": 52.0,
+      "q2": 78.0,
+      "delta": 26.0,
+      "pct": 50.0
+    },
+    {
+      "team": "Outreach",
+      "q1": 2.0,
+      "q2": 26.0,
+      "delta": 24.0,
+      "pct": 1200.0
+    },
+    {
+      "team": "League in Action",
+      "q1": 20.0,
+      "q2": 0,
+      "delta": -20.0,
+      "pct": -100.0
+    },
+    {
+      "team": "Education Action Team",
+      "q1": 80.0,
+      "q2": 89.0,
+      "delta": 9.0,
+      "pct": 11.25
+    },
+    {
+      "team": "Nominating Committee",
+      "q1": 4.25,
+      "q2": 4.0,
+      "delta": -0.25,
+      "pct": -5.88235294117647
+    }
+  ]
+};
+const TEAM_TABS = [["candidate_forums", "Candidate Forums"], ["editorial_essays", "Editorial & Essays"], ["education_action_team", "Education Action Team"], ["gotv", "GOTV Partner Toolkit"], ["membership", "Membership"], ["natural_resources", "Natural Resources"], ["rallies", "Rallies"], ["social_media", "Social Media"], ["speakers_bureau", "Speakers Bureau"], ["vote411", "Vote411"], ["voter_services", "Voter Services"]];
+const CHART_PALETTE = ['#521c50', '#eca400', '#820263', '#eca400', '#820263', '#d4890a', '#E8D48A'];
+const DOUGHNUT_PALETTE = ['#820263', '#eca400', '#9a1a75'];
 
-            <div class="charts-container">
-                <div class="chart-wrapper" style="grid-column: 1 / -1;">
-                    <h3>Voter Services Impact</h3>
-                    <canvas id="chart-voter-services"></canvas>
-                </div>
-            </div>
+// ---------- helpers ----------
+function nr(v) { return (v === null || v === undefined) ? '<span class="nr-value">N/R</span>' : v; }
+function num(v, digits) {
+  if (v === null || v === undefined) return '<span class="nr-value">N/R</span>';
+  const n = Number(v);
+  if (!isFinite(n)) return '<span class="nr-value">N/R</span>';
+  if (digits === undefined) return n.toLocaleString(undefined, {maximumFractionDigits: 1});
+  return n.toLocaleString(undefined, {minimumFractionDigits: digits, maximumFractionDigits: digits});
+}
+function pctText(pct) {
+  if (pct === null || pct === undefined) return '&mdash;';
+  const sign = pct >= 0 ? '+' : '';
+  return sign + pct.toFixed(0) + '%';
+}
+function deltaClass(delta) {
+  if (delta > 0.5) return 'delta-up';
+  if (delta < -0.5) return 'delta-down';
+  return 'delta-flat';
+}
+function fmtDate(s) {
+  if (!s) return '<span class="nr-value">N/R</span>';
+  return s;
+}
 
-            <!-- Team Activity Summary Table -->
-            <div class="table-wrapper summary-table">
-                <h3>Team Activity Summary</h3>
-                <table id="summary-table">
-                    <thead>
-                        <tr>
-                            <th>Team</th>
-                            <th>Activities Reported</th>
-                            <th>People Reached</th>
-                            <th>Volunteer Hours</th>
-                        </tr>
-                    </thead>
-                    <tbody id="summary-table-body">
-                    </tbody>
-                </table>
-            </div>
-        </div>
+// ---------- tab machinery ----------
+const tabs = [
+  {id: 'overview', label: 'Overview', render: renderOverview},
+  {id: 'q1q2', label: 'Q1 vs Q2', render: renderQ1Q2},
+];
+TEAM_TABS.forEach(([key, label]) => tabs.push({id: 'team_' + key, label: label, render: () => renderTeam(key, label)}));
 
-        <!-- SPEAKERS BUREAU TAB -->
-        <div class="tab-content" id="tab-speakers-bureau">
-            <h2 class="section-header">Speakers Bureau</h2>
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <div class="kpi-label">Presentations</div>
-                    <div class="kpi-value">4</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">Total Reach</div>
-                    <div class="kpi-value">93</div>
-                    <div class="small-text">89 live + 4 virtual</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Volunteer Hours</div>
-                    <div class="kpi-value">30.00</div>
-                    <div class="small-text">Election-Related</div>
-                </div>
-            </div>
+function initTabs() {
+  const bar = document.getElementById('tabBar');
+  tabs.forEach((tab, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = tab.label;
+    btn.dataset.tab = tab.id;
+    if (i === 0) btn.classList.add('active');
+    btn.onclick = () => switchTab(tab.id);
+    bar.appendChild(btn);
+  });
+  const main = document.getElementById('mainContent');
+  tabs.forEach((tab, i) => {
+    const div = document.createElement('div');
+    div.className = 'tab-content' + (i === 0 ? ' active' : '');
+    div.id = 'tab_' + tab.id;
+    main.appendChild(div);
+    tab.render(div);
+  });
+}
 
-            <div class="table-wrapper">
-                <h3>Presentations</h3>
-                <table id="speakers-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Event Title</th>
-                            <th>Host</th>
-                            <th>Location</th>
-                            <th>Speaker</th>
-                            <th>Audience Type</th>
-                            <th>Attendees</th>
-                        </tr>
-                    </thead>
-                    <tbody id="speakers-table-body">
-                    </tbody>
-                </table>
-            </div>
-        </div>
+function switchTab(id) {
+  document.querySelectorAll('.tab-bar button').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab_' + id));
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
 
-        <!-- EDUCATION ACTION TEAM TAB -->
-        <div class="tab-content" id="tab-education-action">
-            <h2 class="section-header">Education Action Team</h2>
-            <div class="note-box">
-                <strong>Note:</strong> No volunteer hours reported for Q1 2026. Focus on advocacy, legislative monitoring, and collaborative partnerships.
-            </div>
+// ---------- Overview ----------
+function renderOverview(div) {
+  const q1 = DATA.q1, q2 = DATA.q2;
+  const kpiData = [
+    {label: 'Q2 Volunteer Hours', value: num(q2.total_hours, 1), q1: q1.total_hours, q2: q2.total_hours, unit: 'hrs'},
+    {label: 'Q2 People Reached', value: num(q2.people_reached), q1: q1.people_reached, q2: q2.people_reached},
+    {label: 'Active Teams Reporting', value: num(q2.active_teams), q1: q1.active_teams, q2: q2.active_teams},
+    {label: 'New Members', value: num(q2.new_members), q1: q1.new_members, q2: q2.new_members},
+  ];
 
-            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">Legislative Meetings (3)</h3>
-            <div class="table-wrapper">
-                <table id="education-legislative-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Meeting Type</th>
-                            <th>Topic</th>
-                        </tr>
-                    </thead>
-                    <tbody id="education-legislative-body">
-                    </tbody>
-                </table>
-            </div>
+  let html = `
+    <div class="note-box">
+      <strong>Data quality note:</strong> Q2 volunteer hours are partially incomplete. Thirty-three June/July timecard submissions were lost during a mid-July system rebuild. April and May hours are accurate. A resubmission request has gone out to volunteers. Numbers will be revised in the next monthly update.
+    </div>
+    <h2 class="section-title">Q2 at a glance</h2>
+    <div class="kpi-grid">`;
+  kpiData.forEach(k => {
+    const delta = k.q2 - k.q1;
+    const pct = k.q1 ? (delta / k.q1) * 100 : null;
+    html += `
+      <div class="kpi-card">
+        <div class="kpi-label">${k.label}</div>
+        <div class="kpi-value">${k.value}${k.unit ? ' <span style="font-size:15px">' + k.unit + '</span>' : ''}</div>
+        <div class="kpi-delta ${deltaClass(delta)}">vs Q1: ${delta >= 0 ? '+' : ''}${num(delta)} (${pctText(pct)})</div>
+      </div>`;
+  });
+  html += `</div>`;
 
-            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">Collaborative Meetings (6)</h3>
-            <div class="table-wrapper">
-                <table id="education-collaborative-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Organization</th>
-                            <th>Format</th>
-                            <th>Topic</th>
-                        </tr>
-                    </thead>
-                    <tbody id="education-collaborative-body">
-                    </tbody>
-                </table>
-            </div>
+  html += `<h2 class="section-title">Charts</h2>
+    <div class="chart-grid">
+      <div class="chart-card"><h3>Q2 Volunteer Hours by Team</h3><div class="chart-wrap"><canvas id="chartHoursTeam"></canvas></div></div>
+      <div class="chart-card"><h3>Q2 Hours by Category</h3><div class="chart-wrap"><canvas id="chartHoursCat"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card"><h3>Q2 Event Attendance by Team</h3><div class="chart-wrap"><canvas id="chartAttendance"></canvas></div></div>
+      <div class="chart-card"><h3>Q2 Voter Services Impact</h3><div class="chart-wrap"><canvas id="chartVS"></canvas></div></div>
+    </div>`;
 
-            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">School Board Observations (3)</h3>
-            <div class="table-wrapper">
-                <table id="education-schoolboard-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Meeting Type</th>
-                            <th>Duration</th>
-                            <th>Public Speaking</th>
-                        </tr>
-                    </thead>
-                    <tbody id="education-schoolboard-body">
-                    </tbody>
-                </table>
-            </div>
+  html += buildSummaryTable();
 
-            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">Public Education Events (3)</h3>
-            <div class="table-wrapper">
-                <table id="education-events-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Event</th>
-                        </tr>
-                    </thead>
-                    <tbody id="education-events-body">
-                    </tbody>
-                </table>
-            </div>
+  div.innerHTML = html;
 
-            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">YVote Contest</h3>
-            <div class="table-wrapper">
-                <table id="education-yvote-table">
-                    <thead>
-                        <tr>
-                            <th>Schools Entered</th>
-                            <th>Students</th>
-                            <th>Prizes Won</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>0</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  drawChartHoursTeam();
+  drawChartHoursCat();
+  drawChartAttendance();
+  drawChartVS();
+  makeTablesSortable(div);
+}
 
-        <!-- VOTER SERVICES TAB -->
-        <div class="tab-content" id="tab-voter-services">
-            <h2 class="section-header">Voter Services</h2>
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <div class="kpi-label">Tabling Events</div>
-                    <div class="kpi-value">2</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">People Engaged</div>
-                    <div class="kpi-value">78</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">VBM Forms Provided</div>
-                    <div class="kpi-value">20</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">Volunteer Hours</div>
-                    <div class="kpi-value">57.50</div>
-                </div>
-            </div>
+function buildSummaryTable() {
+  const rows = [];
+  const teamMap = DATA.team_labels;
+  const activityCounts = {
+    voter_services: DATA.metrics.voter_services.Q2.count,
+    speakers_bureau: DATA.metrics.speakers_bureau.Q2.count,
+    education_action_team: DATA.metrics.education_action_team.Q2.count,
+    membership: DATA.metrics.membership.Q2.count,
+    gotv: DATA.metrics.gotv.Q2.count,
+    candidate_forums: DATA.metrics.candidate_forums.Q2.count,
+    editorial_essays: DATA.metrics.editorial_essays.Q2.count,
+    vote411: DATA.metrics.vote411.Q2.count,
+    social_media: DATA.metrics.social_media.Q2.count,
+    rallies: DATA.metrics.rallies.Q2.count,
+    natural_resources: DATA.metrics.natural_resources.Q2.count,
+  };
+  const peopleReached = {
+    voter_services: DATA.metrics.voter_services.Q2.people_engaged,
+    speakers_bureau: (DATA.metrics.speakers_bureau.Q2.live_attendees || 0) + (DATA.metrics.speakers_bureau.Q2.virtual_attendees || 0),
+    education_action_team: DATA.metrics.education_action_team.Q2.people_reached,
+    membership: DATA.metrics.membership.Q2.attending,
+    gotv: DATA.metrics.gotv.Q2.count,
+    candidate_forums: (DATA.metrics.candidate_forums.Q2.live || 0) + (DATA.metrics.candidate_forums.Q2.virtual || 0),
+    editorial_essays: null,
+    vote411: null,
+    social_media: DATA.metrics.social_media.Q2.reach,
+    rallies: DATA.metrics.rallies.Q2.attendance,
+    natural_resources: DATA.metrics.natural_resources.Q2.people_reached === 0 ? null : DATA.metrics.natural_resources.Q2.people_reached,
+  };
 
-            <div class="table-wrapper">
-                <h3>Tabling Events</h3>
-                <table id="voter-services-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Event Type</th>
-                            <th>Online Registrations Assisted</th>
-                            <th>Hard-Copy Forms</th>
-                            <th>VBM Forms Provided</th>
-                            <th>People Engaged</th>
-                        </tr>
-                    </thead>
-                    <tbody id="voter-services-table-body">
-                    </tbody>
-                </table>
-            </div>
+  // Also include Hours-only teams (Board, Communications, Development, etc.)
+  const hoursOnlyTeams = [
+    'Board of Directors', 'Communications', 'Development', 'Events Planning',
+    'Hot Topics', 'League in Action', 'Nominating Committee', 'Observer Corps',
+    'Organizational Assessment & Impact', 'Outreach', 'Young Adult Engagement'
+  ];
 
-            <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                <h3 style="color: #820263; margin-bottom: 15px;">Q1 Summary</h3>
-                <table style="width: 100%;">
-                    <tr>
-                        <td style="padding: 8px;"><strong>Total Online Registrations Assisted:</strong></td>
-                        <td style="padding: 8px; text-align: right;"><strong>0</strong></td>
-                    </tr>
-                    <tr style="background: #f8f2f6;">
-                        <td style="padding: 8px;"><strong>Total Hard-Copy Forms:</strong></td>
-                        <td style="padding: 8px; text-align: right;"><strong>0</strong></td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px;"><strong>Total VBM Forms Provided:</strong></td>
-                        <td style="padding: 8px; text-align: right;"><strong>20</strong></td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px;"><strong>Total People Engaged:</strong></td>
-                        <td style="padding: 8px; text-align: right;"><strong>78</strong></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+  let html = `
+    <h2 class="section-title">Q2 Summary by Team</h2>
+    <table class="sortable">
+      <thead><tr>
+        <th data-sort="text">Team</th>
+        <th data-sort="num" class="num">Q2 Activities</th>
+        <th data-sort="num" class="num">Q2 People Reached</th>
+        <th data-sort="num" class="num">Q2 Hours</th>
+        <th data-sort="num" class="num">Q1 Hours</th>
+        <th data-sort="num" class="num">Δ Hours</th>
+      </tr></thead><tbody>`;
 
-        <!-- EVENT PLANNING TAB -->
-        <div class="tab-content" id="tab-event-planning">
-            <h2 class="section-header">Event Planning Team</h2>
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <div class="kpi-label">Events Held</div>
-                    <div class="kpi-value">3</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">Total Live Attendance</div>
-                    <div class="kpi-value">58</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Registered</div>
-                    <div class="kpi-value">100</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">Volunteer Hours</div>
-                    <div class="kpi-value">20.00</div>
-                </div>
-            </div>
+  // Detail teams first
+  Object.keys(teamMap).forEach(key => {
+    const label = teamMap[key];
+    const hoursQ2 = DATA.q2.hours_by_team[label] || 0;
+    const hoursQ1 = DATA.q1.hours_by_team[label] || 0;
+    const acts = activityCounts[key];
+    const pr = peopleReached[key];
+    const delta = hoursQ2 - hoursQ1;
+    html += `<tr>
+      <td>${label}</td>
+      <td class="num" data-value="${acts||0}">${num(acts)}</td>
+      <td class="num" data-value="${pr === null ? '' : (pr||0)}">${pr === null ? nr(null) : num(pr)}</td>
+      <td class="num" data-value="${hoursQ2}">${num(hoursQ2, 1)}</td>
+      <td class="num" data-value="${hoursQ1}">${num(hoursQ1, 1)}</td>
+      <td class="num" data-value="${delta}"><span class="${deltaClass(delta)}">${delta >= 0 ? '+' : ''}${num(delta, 1)}</span></td>
+    </tr>`;
+  });
+  // Hours-only teams
+  hoursOnlyTeams.forEach(label => {
+    const hoursQ2 = DATA.q2.hours_by_team[label] || 0;
+    const hoursQ1 = DATA.q1.hours_by_team[label] || 0;
+    if (hoursQ1 === 0 && hoursQ2 === 0) return;
+    const delta = hoursQ2 - hoursQ1;
+    html += `<tr>
+      <td>${label}</td>
+      <td class="num" data-value="">${nr(null)}</td>
+      <td class="num" data-value="">${nr(null)}</td>
+      <td class="num" data-value="${hoursQ2}">${num(hoursQ2, 1)}</td>
+      <td class="num" data-value="${hoursQ1}">${num(hoursQ1, 1)}</td>
+      <td class="num" data-value="${delta}"><span class="${deltaClass(delta)}">${delta >= 0 ? '+' : ''}${num(delta, 1)}</span></td>
+    </tr>`;
+  });
+  html += `</tbody></table>`;
+  return html;
+}
 
-            <div class="table-wrapper">
-                <h3>Events</h3>
-                <table id="event-planning-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Event Title</th>
-                            <th>Type</th>
-                            <th>Registered</th>
-                            <th>Live Attendance</th>
-                            <th>Virtual</th>
-                        </tr>
-                    </thead>
-                    <tbody id="event-planning-table-body">
-                    </tbody>
-                </table>
-            </div>
-        </div>
+// ---------- Q1 vs Q2 tab ----------
+function renderQ1Q2(div) {
+  const q1c = DATA.q1.hours_by_cat, q2c = DATA.q2.hours_by_cat;
+  const catDelta = {
+    Election: q2c.Election - q1c.Election,
+    'Non-Election': q2c['Non-Election'] - q1c['Non-Election'],
+    Admin: q2c.Admin - q1c.Admin,
+  };
 
-        <!-- MEMBERSHIP TAB -->
-        <div class="tab-content" id="tab-membership">
-            <h2 class="section-header">Membership</h2>
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <div class="kpi-label">New Members (Q1)</div>
-                    <div class="kpi-value">31</div>
-                    <div class="small-text">Jan 1 – Mar 15, 2026</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">Engagement Events</div>
-                    <div class="kpi-value">5</div>
-                    <div class="small-text">Lunches & Mix & Mingles</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Event Attendance</div>
-                    <div class="kpi-value">94</div>
-                </div>
-            </div>
-
-            <div class="note-box">
-                <strong>Tracking Note:</strong> Churn and retention rates not yet being tracked. Consider adding for Q2.
-            </div>
-
-            <div class="table-wrapper">
-                <h3>Engagement Events</h3>
-                <table id="membership-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Event Type</th>
-                            <th>Attendees</th>
-                        </tr>
-                    </thead>
-                    <tbody id="membership-table-body">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- HOT TOPICS TAB -->
-        <div class="tab-content" id="tab-hot-topics">
-            <h2 class="section-header">Hot Topics Team</h2>
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <div class="kpi-label">Events Held</div>
-                    <div class="kpi-value">1</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">In-Person Attendees</div>
-                    <div class="kpi-value">44</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Volunteer Hours</div>
-                    <div class="kpi-value">7.50</div>
-                    <div class="small-text">Administrative</div>
-                </div>
-            </div>
-
-            <div class="table-wrapper">
-                <h3>Event Details</h3>
-                <table id="hot-topics-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Event Title</th>
-                            <th>Type</th>
-                            <th>In-Person Attendees</th>
-                        </tr>
-                    </thead>
-                    <tbody id="hot-topics-table-body">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- EDITORIAL & ESSAYS TAB -->
-        <div class="tab-content" id="tab-editorial">
-            <h2 class="section-header">Editorial & Essays</h2>
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <div class="kpi-label">Publications</div>
-                    <div class="kpi-value">1</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">Publication Type</div>
-                    <div class="kpi-value">Op/Ed</div>
-                </div>
-            </div>
-
-            <div class="table-wrapper">
-                <h3>Publications</h3>
-                <table id="editorial-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Publication</th>
-                            <th>Topic</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody id="editorial-table-body">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- BOARD OF DIRECTORS TAB -->
-        <div class="tab-content" id="tab-board">
-            <h2 class="section-header">Board of Directors</h2>
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <div class="kpi-label">Volunteer Hours</div>
-                    <div class="kpi-value">112.75</div>
-                </div>
-            </div>
-
-            <div style="background: white; padding: 25px; border-radius: 8px; margin-top: 20px;">
-                <h3 style="color: #820263; margin-bottom: 15px;">Q1 Summary</h3>
-                <p style="margin-bottom: 15px;">
-                    The Board of Directors contributed <strong>112.75 volunteer hours</strong> in Q1 2026, representing the largest volunteer contribution across all teams. These hours include leadership, governance, strategic planning, and administrative functions essential to LWVSRQ's operations.
-                </p>
-                <p>
-                    <strong>Category Breakdown:</strong> Administrative (all hours)
-                </p>
-            </div>
-        </div>
-
-        <!-- VOTE 411 TAB -->
-        <div class="tab-content" id="tab-vote411">
-            <h2 class="section-header">Vote 411</h2>
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <div class="kpi-label">Volunteer Hours</div>
-                    <div class="kpi-value">7.00</div>
-                </div>
-            </div>
-
-            <div style="background: white; padding: 25px; border-radius: 8px; margin-top: 20px;">
-                <h3 style="color: #820263; margin-bottom: 15px;">Q1 Summary</h3>
-                <p style="margin-bottom: 15px;">
-                    The Vote411 initiative contributed <strong>7.00 volunteer hours</strong> in Q1 2026. This effort supports LWV's nationally recognized voter information platform, helping voters research candidates and ballot measures.
-                </p>
-                <p>
-                    <strong>Category:</strong> Administrative
-                </p>
-            </div>
-        </div>
-
-        <!-- COMMUNICATIONS TAB -->
-        <div class="tab-content" id="tab-communications">
-            <h2 class="section-header">Communications</h2>
-
-            <!-- YouTube Section -->
-            <h3 style="color: #820263; margin-top: 30px; margin-bottom: 15px;">YouTube</h3>
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Videos</div>
-                    <div class="kpi-value">7</div>
-                </div>
-                <div class="kpi-card alt">
-                    <div class="kpi-label">Q1 Unique Viewers</div>
-                    <div class="kpi-value">94</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Top Video Viewers</div>
-                    <div class="kpi-value">51</div>
-                    <div class="small-text">Beyond the Classroom</div>
-                </div>
-            </div>
-
-            <div class="charts-container">
-                <div class="chart-wrapper" style="grid-column: 1 / -1;">
-                    <h3>Unique Viewers by Month</h3>
-                    <canvas id="chart-youtube-monthly"></canvas>
-                </div>
-            </div>
-
-            <div class="table-wrapper">
-                <h3>Video Performance – Q1 2026</h3>
-                <table id="youtube-table">
-                    <thead>
-                        <tr>
-                            <th>Video Title</th>
-                            <th>Published</th>
-                            <th>Jan</th>
-                            <th>Feb</th>
-                            <th>Mar</th>
-                            <th>Q1 Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="youtube-table-body">
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Newsletter/Email Section - Coming Q2 -->
-            <h3 style="color: #820263; margin-top: 40px; margin-bottom: 15px;">Newsletter / Email</h3>
-            <div class="note-box">
-                <strong>Coming Q2 2026:</strong> Email campaign metrics including open rates, click rates, and subscriber growth.
-            </div>
-
-            <!-- Social Media Section - Coming Q2 -->
-            <h3 style="color: #820263; margin-top: 40px; margin-bottom: 15px;">Social Media</h3>
-            <div class="note-box">
-                <strong>Coming Q2 2026:</strong> Social media engagement, follower growth, and impressions by platform.
-            </div>
-        </div>
-
+  let html = `
+    <h2 class="section-title">Quarter-over-quarter</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total hours</div>
+        <div class="kpi-value">${num(DATA.q1.total_hours, 1)} &rarr; ${num(DATA.q2.total_hours, 1)}</div>
+        <div class="kpi-delta ${deltaClass(DATA.q2.total_hours - DATA.q1.total_hours)}">${(DATA.q2.total_hours - DATA.q1.total_hours) >= 0 ? '+' : ''}${num(DATA.q2.total_hours - DATA.q1.total_hours, 1)} hrs (${pctText((DATA.q2.total_hours - DATA.q1.total_hours) / DATA.q1.total_hours * 100)})</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">People reached (event-based)</div>
+        <div class="kpi-value">${num(DATA.q1.people_reached)} &rarr; ${num(DATA.q2.people_reached)}</div>
+        <div class="kpi-delta ${deltaClass(DATA.q2.people_reached - DATA.q1.people_reached)}">${(DATA.q2.people_reached - DATA.q1.people_reached) >= 0 ? '+' : ''}${num(DATA.q2.people_reached - DATA.q1.people_reached)} (${pctText((DATA.q2.people_reached - DATA.q1.people_reached) / DATA.q1.people_reached * 100)})</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Teams reporting hours</div>
+        <div class="kpi-value">${num(DATA.q1.active_teams)} &rarr; ${num(DATA.q2.active_teams)}</div>
+        <div class="kpi-delta ${deltaClass(DATA.q2.active_teams - DATA.q1.active_teams)}">${(DATA.q2.active_teams - DATA.q1.active_teams) >= 0 ? '+' : ''}${DATA.q2.active_teams - DATA.q1.active_teams}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">New members</div>
+        <div class="kpi-value">${num(DATA.q1.new_members)} &rarr; ${num(DATA.q2.new_members)}</div>
+        <div class="kpi-delta ${deltaClass(DATA.q2.new_members - DATA.q1.new_members)}">${(DATA.q2.new_members - DATA.q1.new_members) >= 0 ? '+' : ''}${DATA.q2.new_members - DATA.q1.new_members}</div>
+      </div>
     </div>
 
-    <footer>
-        <p>LWVSRQ Q1 2026 Performance Dashboard | Data as of April 16, 2026 | Generated for Board of Directors</p>
-        <div class="data-legend"><span class="nr-value">N/R</span> = Not Reported (data was not submitted; distinct from a confirmed zero)</div>
-    </footer>
+    <div class="commentary">
+      <strong>Category shift:</strong> Election-related hours grew from ${num(q1c.Election, 1)} in Q1 to ${num(q2c.Election, 1)} in Q2 (${pctText(catDelta.Election / q1c.Election * 100)}). Non-election hours dropped from ${num(q1c['Non-Election'], 1)} to ${num(q2c['Non-Election'], 1)} (${pctText(catDelta['Non-Election'] / q1c['Non-Election'] * 100)}). This is what a healthy campaign-cycle activation looks like: infrastructure work in Q1, voter-facing execution in Q2.
+    </div>
 
-    <script>
-        // ===== DATA DEFINITIONS =====
-        const data = {
-            overview: {
-                volunteerHours: 234.75,
-                peopleReached: 269,
-                activeTeams: 10,
-                newMembers: 31
-            },
-            hoursByTeam: {
-                labels: ['Board of Directors', 'Voter Services', 'Speakers Bureau', 'Event Planning Team', 'Hot Topics Team', 'Vote 411'],
-                values: [112.75, 57.50, 30.00, 20.00, 7.50, 7.00]
-            },
-            hoursByCategory: {
-                labels: ['Election-Related', 'Non-Election-Related', 'Administrative'],
-                values: [102.5, 28.25, 104.0]
-            },
-            eventAttendance: {
-                labels: [
-                    'Healthcare Cuts\n(Jan 16)',
-                    'Mid-Decade Redistricting\n@ Aviva (Jan 22)',
-                    'Project 180\n(Feb 12)',
-                    'Water Stewardship\n(Mar 20)',
-                    'Mid Decade Redistricting\n@ Plymouth Harbor (Apr 2)',
-                    'Mid Decade Redistricting\n@ Ringling (Mar 30)'
-                ],
-                values: [44, 40, 31, 27, 35, 14]
-            },
-            voterServices: {
-                labels: ['Jan 19 Community Event', 'Jan 22 Speakers Bureau Event'],
-                engaged: [30, 48],
-                vbm: [10, 10]
-            },
-            teams: [
-                {
-                    id: 'speakers-bureau',
-                    name: 'Speakers Bureau',
-                    activities: 4,
-                    peopleReached: 93,
-                    hours: 30.00
-                },
-                {
-                    id: 'education-action',
-                    name: 'Education Action Team',
-                    activities: 12,
-                    peopleReached: null,
-                    hours: 0
-                },
-                {
-                    id: 'voter-services',
-                    name: 'Voter Services',
-                    activities: 2,
-                    peopleReached: 78,
-                    hours: 57.50
-                },
-                {
-                    id: 'event-planning',
-                    name: 'Event Planning Team',
-                    activities: 3,
-                    peopleReached: 58,
-                    hours: 20.00
-                },
-                {
-                    id: 'membership',
-                    name: 'Membership',
-                    activities: 5,
-                    peopleReached: 94,
-                    hours: 0
-                },
-                {
-                    id: 'hot-topics',
-                    name: 'Hot Topics Team',
-                    activities: 1,
-                    peopleReached: 44,
-                    hours: 7.50
-                },
-                {
-                    id: 'editorial',
-                    name: 'Editorial & Essays',
-                    activities: 1,
-                    peopleReached: null,
-                    hours: 0
-                },
-                {
-                    id: 'board',
-                    name: 'Board of Directors',
-                    activities: 1,
-                    peopleReached: null,
-                    hours: 112.75
-                },
-                {
-                    id: 'vote411',
-                    name: 'Vote 411',
-                    activities: 1,
-                    peopleReached: null,
-                    hours: 7.00
-                }
-            ]
-        };
+    <div class="chart-grid">
+      <div class="chart-card"><h3>Hours by Team: Q1 vs Q2</h3><div class="chart-wrap" style="height:420px"><canvas id="chartQ1Q2Team"></canvas></div></div>
+      <div class="chart-card"><h3>Hours by Category</h3><div class="chart-wrap" style="height:420px"><canvas id="chartQ1Q2Cat"></canvas></div></div>
+    </div>
 
-        // ===== TABLE DATA =====
-        const speakersBureauData = [
-            { date: 'Jan 12', title: 'Speaker bureau monthly meeting', host: 'Cherie Balan', location: 'Zoom', speaker: 'N/A', audience: 'Internal', attendees: '0 live, 4 virtual' },
-            { date: 'Jan 22', title: 'Mid-Decade Redistricting', host: 'Aviva Senior Living', location: 'North County', speaker: 'Jeff Kraus', audience: 'Seniors', attendees: '40' },
-            { date: 'Mar 30', title: 'Mid Decade Redistricting', host: 'Ringling College', location: 'North County', speaker: 'Jeff Kraus', audience: 'Teen/Young Adults', attendees: '14' },
-            { date: 'Apr 2', title: 'Mid Decade Redistricting', host: 'Plymouth Harbor Sarasota Bay', location: 'North County', speaker: 'Jeff Kraus', audience: 'Seniors', attendees: '35' }
-        ];
+    <h2 class="section-title">Team-by-team variance (hours)</h2>
+    <table class="sortable">
+      <thead><tr>
+        <th data-sort="text">Team</th>
+        <th data-sort="num" class="num">Q1 hrs</th>
+        <th data-sort="num" class="num">Q2 hrs</th>
+        <th data-sort="num" class="num">Δ hrs</th>
+        <th data-sort="num" class="num">% Δ</th>
+      </tr></thead><tbody>`;
 
-        const educationLegislativeData = [
-            { date: 'Feb 1', type: 'Action Alert Response', topic: 'School Choice' },
-            { date: 'Feb 20', type: 'FL State Board of Education', topic: 'School Choice (Virtual Observer)' },
-            { date: 'Mar 24', type: 'Team Meeting', topic: 'Vouchers, school choice, parent engagement, separation of church & state' }
-        ];
+  DATA.variance.forEach(r => {
+    if (r.q1 === 0 && r.q2 === 0) return;
+    html += `<tr>
+      <td>${r.team}</td>
+      <td class="num" data-value="${r.q1}">${num(r.q1, 1)}</td>
+      <td class="num" data-value="${r.q2}">${num(r.q2, 1)}</td>
+      <td class="num" data-value="${r.delta}"><span class="${deltaClass(r.delta)}">${r.delta >= 0 ? '+' : ''}${num(r.delta, 1)}</span></td>
+      <td class="num" data-value="${r.pct === null ? 9999 : r.pct}"><span class="${deltaClass(r.delta)}">${pctText(r.pct)}</span></td>
+    </tr>`;
+  });
+  html += `</tbody></table>
 
-        const educationCollaborativeData = [
-            { date: 'Feb 5', org: 'Education Law Center', format: 'Zoom', topic: 'Voucher advocacy' },
-            { date: 'Feb 6', org: 'Florida Policy Institute', format: 'Zoom', topic: 'Voucher Legislation Updates' },
-            { date: 'Feb 6', org: 'Families for Strong Public Schools', format: 'Zoom', topic: 'Schools of Hope' },
-            { date: 'Feb 20', org: 'Families for Strong Public Schools', format: 'Zoom', topic: 'Schools of Hope' },
-            { date: 'Mar 3', org: 'Florida Education Association', format: 'Zoom (Weekly)', topic: 'FL legislation updates' },
-            { date: 'Feb 10', org: 'Florida Education Association', format: 'Zoom', topic: 'FL legislation updates' }
-        ];
+  <h2 class="section-title">Activity metrics: Q1 vs Q2</h2>
+  <table class="sortable">
+    <thead><tr>
+      <th data-sort="text">Team</th>
+      <th data-sort="text">Metric</th>
+      <th data-sort="num" class="num">Q1</th>
+      <th data-sort="num" class="num">Q2</th>
+      <th data-sort="num" class="num">Δ</th>
+    </tr></thead><tbody>` + activityMetricsRows() + `</tbody></table>
 
-        const educationSchoolBoardData = [
-            { date: 'Feb 3', type: 'Workshop', duration: '2-3 hours', speaking: 'No' },
-            { date: 'Feb 17', type: 'Meeting', duration: '5-6 hours', speaking: 'No' },
-            { date: 'Mar 24', type: 'Meeting', duration: '4-5 hours', speaking: 'No' }
-        ];
+  <div class="commentary">
+    <strong>What the numbers say:</strong> Q2 was the campaign-season activation. Voter-facing teams (Speakers Bureau, Candidate Forums, Vote411, Social Media, GOTV Partner Toolkit) all showed significant Q2 activity that was minimal or absent in Q1. Membership grew (${num(DATA.q2.new_members)} new members in Q2 vs ${num(DATA.q1.new_members)} in Q1). And at the same time, total volunteer hours are down about 9% quarter-over-quarter &mdash; part of that reflects the June reporting gap, and part is the reallocation from planning to execution work. Communications hours fell 68% and Membership hours fell 61%; both merit a closer look at whether that's reporting or actual activity.
+  </div>`;
 
-        const educationEventsData = [
-            { date: 'Feb 5', event: 'School Choice (Initiative)' },
-            { date: 'Feb 9', event: 'Distribution of School Choice Brochures to Libraries' },
-            { date: 'Mar 4', event: 'Beyond the Classroom: Key Issues Shaping Education in Sarasota' }
-        ];
+  div.innerHTML = html;
+  drawChartQ1Q2Team();
+  drawChartQ1Q2Cat();
+  makeTablesSortable(div);
+}
 
-        const voterServicesData = [
-            { date: 'Jan 19', type: 'Community', online: 0, hardcopy: 0, vbmProvided: 10, engaged: 30 },
-            { date: 'Jan 22', type: 'Speakers Bureau', online: 0, hardcopy: 0, vbmProvided: 10, engaged: 48 }
-        ];
+function activityMetricsRows() {
+  const rows = [];
+  const m = DATA.metrics;
+  function row(team, metric, q1, q2) {
+    if ((q1 === 0 || q1 === null) && (q2 === 0 || q2 === null)) return;
+    const d = (q2 || 0) - (q1 || 0);
+    rows.push(`<tr>
+      <td>${team}</td><td>${metric}</td>
+      <td class="num" data-value="${q1||0}">${num(q1||0)}</td>
+      <td class="num" data-value="${q2||0}">${num(q2||0)}</td>
+      <td class="num" data-value="${d}"><span class="${deltaClass(d)}">${d >= 0 ? '+' : ''}${num(d)}</span></td>
+    </tr>`);
+  }
+  row('Voter Services', 'Events', m.voter_services.Q1.count, m.voter_services.Q2.count);
+  row('Voter Services', 'People engaged', m.voter_services.Q1.people_engaged, m.voter_services.Q2.people_engaged);
+  row('Voter Services', 'VBM forms given', m.voter_services.Q1.vbm_given, m.voter_services.Q2.vbm_given);
+  row('Voter Services', 'Online registrations', m.voter_services.Q1.online_reg, m.voter_services.Q2.online_reg);
+  row('Speakers Bureau', 'Presentations', m.speakers_bureau.Q1.count, m.speakers_bureau.Q2.count);
+  row('Speakers Bureau', 'Total attendees', (m.speakers_bureau.Q1.live_attendees||0)+(m.speakers_bureau.Q1.virtual_attendees||0), (m.speakers_bureau.Q2.live_attendees||0)+(m.speakers_bureau.Q2.virtual_attendees||0));
+  row('Education Action Team', 'Activities', m.education_action_team.Q1.count, m.education_action_team.Q2.count);
+  row('Education Action Team', 'People reached', m.education_action_team.Q1.people_reached, m.education_action_team.Q2.people_reached);
+  row('Membership', 'Events', m.membership.Q1.count, m.membership.Q2.count);
+  row('Membership', 'Total attending', m.membership.Q1.attending, m.membership.Q2.attending);
+  row('Membership', 'New members', m.membership.Q1.new_members, m.membership.Q2.new_members);
+  row('Candidate Forums', 'Forums held', m.candidate_forums.Q1.count, m.candidate_forums.Q2.count);
+  row('Candidate Forums', 'Total reach (live + virtual + 30-day views)', (m.candidate_forums.Q1.live||0)+(m.candidate_forums.Q1.virtual||0)+(m.candidate_forums.Q1.views_30day||0), (m.candidate_forums.Q2.live||0)+(m.candidate_forums.Q2.virtual||0)+(m.candidate_forums.Q2.views_30day||0));
+  row('GOTV Partner Toolkit', 'Interactions', m.gotv.Q1.count, m.gotv.Q2.count);
+  row('GOTV Partner Toolkit', 'Active deployments', m.gotv.Q1.active_deployments, m.gotv.Q2.active_deployments);
+  row('Vote411', 'Activities', m.vote411.Q1.count, m.vote411.Q2.count);
+  row('Vote411', 'Candidate profiles', m.vote411.Q1.candidate_count, m.vote411.Q2.candidate_count);
+  row('Social Media', 'Reach (aggregate)', m.social_media.Q1.reach, m.social_media.Q2.reach);
+  row('Social Media', 'Engagement', m.social_media.Q1.engagement, m.social_media.Q2.engagement);
+  row('Rallies', 'Rallies held', m.rallies.Q1.count, m.rallies.Q2.count);
+  row('Rallies', 'Attendance', m.rallies.Q1.attendance, m.rallies.Q2.attendance);
+  row('Editorial & Essays', 'Publications', m.editorial_essays.Q1.count, m.editorial_essays.Q2.count);
+  row('Natural Resources', 'Activities', m.natural_resources.Q1.count, m.natural_resources.Q2.count);
+  return rows.join('');
+}
 
-        const eventPlanningData = [
-            { date: 'Feb 12', title: 'Project 180: Reintegrating Returning Citizens', type: 'Education', registered: 28, live: 31, virtual: null },
-            { date: 'Mar 4', title: 'Beyond the Classroom: Key Issues Shaping Education in Sarasota', type: 'Education', registered: 42, live: null, virtual: null },
-            { date: 'Mar 20', title: 'Water Stewardship: Managing Our Most Precious Resource', type: 'Education', registered: 30, live: 27, virtual: null }
-        ];
+// ---------- Team tabs ----------
+function renderTeam(key, label) {
+  return function(div) {
+    const details = DATA.details[key] || [];
+    const q1Rows = details.filter(r => r.quarter === 'Q1');
+    const q2Rows = details.filter(r => r.quarter === 'Q2');
+    const hoursQ1 = DATA.q1.hours_by_team[label] || 0;
+    const hoursQ2 = DATA.q2.hours_by_team[label] || 0;
 
-        const membershipData = [
-            { date: 'Jan 14', event: 'North County Lunch', attendees: 17 },
-            { date: 'Jan 28', event: 'North County Mix & Mingle', attendees: 19 },
-            { date: 'Jan 31', event: 'Member Event', attendees: 38 },
-            { date: 'Feb 11', event: 'North County Lunch', attendees: 12 },
-            { date: 'Mar 11', event: 'North County Lunch', attendees: 8 }
-        ];
+    let kpis = teamKPIs(key, hoursQ1, hoursQ2);
 
-        const hotTopicsData = [
-            { date: 'Jan 16', title: 'Affordability and Accessibility: The Impact of Healthcare Cuts on our Community', type: 'Advocacy', attendees: 44 }
-        ];
+    let html = `<h2 class="section-title">${label}</h2>`;
+    html += `<div class="kpi-grid">${kpis}</div>`;
 
-        const editorialData = [
-            { date: 'Feb 16', publication: 'Sarasota Herald Tribune', topic: 'FL Legislature Documentary Proof of Citizenship/Voter Suppression', type: 'Op/Ed' }
-        ];
+    if (hoursQ1 === 0 && hoursQ2 === 0) {
+      html += `<div class="note-box">No volunteer hours reported for this team in Q1 or Q2. Activity data is captured below.</div>`;
+    }
 
-        // ===== HELPER: Display null as N/R =====
-        function nr(value, suffix) {
-            if (value === null || value === undefined) return '<span class="nr-value">N/R</span>';
-            if (suffix) return value + suffix;
-            return value;
-        }
+    html += `<h3 class="subhead">Q2 activities (${q2Rows.length})</h3>`;
+    html += teamTable(key, q2Rows);
+    html += `<h3 class="subhead">Q1 activities (${q1Rows.length})</h3>`;
+    html += teamTable(key, q1Rows);
 
-        // ===== CHART CONFIGURATION =====
-        try {
-        const chartColors = ['#521c50', '#eca400', '#820263', '#eca400', '#820263', '#d4890a', '#E8D48A'];
+    div.innerHTML = html;
+    makeTablesSortable(div);
+  };
+}
 
-        // Chart 1: Hours by Team
-        const ctx1 = document.getElementById('chart-hours-by-team').getContext('2d');
-        new Chart(ctx1, {
-            type: 'bar',
-            data: {
-                labels: data.hoursByTeam.labels,
-                datasets: [{
-                    label: 'Volunteer Hours',
-                    data: data.hoursByTeam.values,
-                    backgroundColor: chartColors,
-                    borderColor: '#820263',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.parsed.x.toFixed(2) + ' hours';
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value.toFixed(1);
-                            }
-                        }
-                    }
-                }
-            }
+function teamKPIs(key, hoursQ1, hoursQ2) {
+  const m = DATA.metrics[key];
+  const items = [];
+  items.push({label: 'Q2 volunteer hours', v: num(hoursQ2, 1), q1v: hoursQ1, q2v: hoursQ2});
+  if (key === 'voter_services') {
+    items.push({label: 'Q2 people engaged', v: num(m.Q2.people_engaged), q1v: m.Q1.people_engaged, q2v: m.Q2.people_engaged});
+    items.push({label: 'Q2 VBM forms provided', v: num(m.Q2.vbm_given), q1v: m.Q1.vbm_given, q2v: m.Q2.vbm_given});
+    items.push({label: 'Q2 tabling events', v: num(m.Q2.count), q1v: m.Q1.count, q2v: m.Q2.count});
+  } else if (key === 'speakers_bureau') {
+    items.push({label: 'Q2 presentations', v: num(m.Q2.count), q1v: m.Q1.count, q2v: m.Q2.count});
+    items.push({label: 'Q2 total reach', v: num((m.Q2.live_attendees||0)+(m.Q2.virtual_attendees||0)), q1v: (m.Q1.live_attendees||0)+(m.Q1.virtual_attendees||0), q2v: (m.Q2.live_attendees||0)+(m.Q2.virtual_attendees||0)});
+  } else if (key === 'education_action_team') {
+    items.push({label: 'Q2 activities', v: num(m.Q2.count), q1v: m.Q1.count, q2v: m.Q2.count});
+    items.push({label: 'Q2 people reached', v: num(m.Q2.people_reached), q1v: m.Q1.people_reached, q2v: m.Q2.people_reached});
+  } else if (key === 'membership') {
+    items.push({label: 'Q2 events', v: num(m.Q2.count), q1v: m.Q1.count, q2v: m.Q2.count});
+    items.push({label: 'Q2 attending', v: num(m.Q2.attending), q1v: m.Q1.attending, q2v: m.Q2.attending});
+    items.push({label: 'Q2 new members', v: num(m.Q2.new_members), q1v: m.Q1.new_members, q2v: m.Q2.new_members});
+  } else if (key === 'gotv') {
+    items.push({label: 'Q2 partner interactions', v: num(m.Q2.count), q1v: m.Q1.count, q2v: m.Q2.count});
+    items.push({label: 'Q2 active deployments', v: num(m.Q2.active_deployments), q1v: m.Q1.active_deployments, q2v: m.Q2.active_deployments});
+  } else if (key === 'candidate_forums') {
+    items.push({label: 'Q2 forums held', v: num(m.Q2.count), q1v: m.Q1.count, q2v: m.Q2.count});
+    items.push({label: 'Q2 total reach', v: num((m.Q2.live||0)+(m.Q2.virtual||0)+(m.Q2.views_30day||0)), q1v: (m.Q1.live||0)+(m.Q1.virtual||0)+(m.Q1.views_30day||0), q2v: (m.Q2.live||0)+(m.Q2.virtual||0)+(m.Q2.views_30day||0)});
+  } else if (key === 'vote411') {
+    items.push({label: 'Q2 activities', v: num(m.Q2.count), q1v: m.Q1.count, q2v: m.Q2.count});
+    items.push({label: 'Q2 candidate profiles', v: num(m.Q2.candidate_count), q1v: m.Q1.candidate_count, q2v: m.Q2.candidate_count});
+  } else if (key === 'social_media') {
+    items.push({label: 'Q2 reach', v: num(m.Q2.reach), q1v: m.Q1.reach, q2v: m.Q2.reach});
+    items.push({label: 'Q2 engagement', v: num(m.Q2.engagement), q1v: m.Q1.engagement, q2v: m.Q2.engagement});
+    items.push({label: 'Q2 audience size', v: num(m.Q2.audience), q1v: m.Q1.audience, q2v: m.Q2.audience});
+  } else if (key === 'editorial_essays') {
+    items.push({label: 'Q2 publications', v: num(m.Q2.count), q1v: m.Q1.count, q2v: m.Q2.count});
+  } else if (key === 'rallies') {
+    items.push({label: 'Q2 rallies', v: num(m.Q2.count), q1v: m.Q1.count, q2v: m.Q2.count});
+    items.push({label: 'Q2 attendance', v: num(m.Q2.attendance), q1v: m.Q1.attendance, q2v: m.Q2.attendance});
+  } else if (key === 'natural_resources') {
+    items.push({label: 'Q2 activities', v: num(m.Q2.count), q1v: m.Q1.count, q2v: m.Q2.count});
+  }
+  return items.map(k => {
+    const delta = (k.q2v || 0) - (k.q1v || 0);
+    return `<div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.v}</div>
+      <div class="kpi-delta ${deltaClass(delta)}">vs Q1: ${delta >= 0 ? '+' : ''}${num(delta, 1)}</div>
+    </div>`;
+  }).join('');
+}
+
+function teamTable(key, rows) {
+  if (!rows || rows.length === 0) {
+    return `<div class="note-box">No activities reported.</div>`;
+  }
+  const configs = {
+    voter_services: [
+      {key: 'date', label: 'Date', type: 'text'},
+      {key: 'event_type', label: 'Event Type', type: 'text'},
+      {key: 'online_reg', label: 'Online Reg', type: 'num'},
+      {key: 'hard_copy', label: 'Hard-Copy Forms', type: 'num'},
+      {key: 'vbm_given', label: 'VBM Forms Given', type: 'num'},
+      {key: 'people_engaged', label: 'People Engaged', type: 'num'},
+      {key: 'notes', label: 'Notes', type: 'text'},
+    ],
+    speakers_bureau: [
+      {key: 'date', label: 'Date', type: 'text'},
+      {key: 'event_title', label: 'Event Title', type: 'text'},
+      {key: 'event_host', label: 'Host', type: 'text'},
+      {key: 'region', label: 'Region', type: 'text'},
+      {key: 'speaker', label: 'Speaker', type: 'text'},
+      {key: 'audience_type', label: 'Audience', type: 'text'},
+      {key: 'live_attendees', label: 'Live', type: 'num'},
+      {key: 'virtual_attendees', label: 'Virtual', type: 'num'},
+    ],
+    education_action_team: [
+      {key: 'date', label: 'Date', type: 'text'},
+      {key: 'activity_type', label: 'Activity Type', type: 'text'},
+      {key: 'title_or_topic', label: 'Title / Topic', type: 'text'},
+      {key: 'counterpart', label: 'Partner', type: 'text'},
+      {key: 'format', label: 'Format', type: 'text'},
+      {key: 'people_reached', label: 'People Reached', type: 'num'},
+      {key: 'lwv_spoke_publicly', label: 'LWV Spoke', type: 'text'},
+    ],
+    membership: [
+      {key: 'date', label: 'Date', type: 'text'},
+      {key: 'event_name', label: 'Event', type: 'text'},
+      {key: 'event_type', label: 'Type', type: 'text'},
+      {key: 'attending', label: 'Attending', type: 'num'},
+      {key: 'new_members', label: 'New Members', type: 'num'},
+      {key: 'churn_rate', label: 'Churn %', type: 'num'},
+      {key: 'retention_rate', label: 'Retention %', type: 'num'},
+    ],
+    candidate_forums: [
+      {key: 'date', label: 'Date', type: 'text'},
+      {key: 'race', label: 'Race / Office', type: 'text'},
+      {key: 'format', label: 'Format', type: 'text'},
+      {key: 'live', label: 'Live', type: 'num'},
+      {key: 'virtual', label: 'Virtual', type: 'num'},
+      {key: 'views_30day', label: '30-Day Views', type: 'num'},
+      {key: 'co_sponsors', label: 'Co-sponsors', type: 'text'},
+    ],
+    gotv: [
+      {key: 'date', label: 'Date', type: 'text'},
+      {key: 'stage', label: 'Stage', type: 'text'},
+      {key: 'partner_org', label: 'Partner Organization', type: 'text'},
+      {key: 'org_type', label: 'Org Type', type: 'text'},
+      {key: 'materials_shared', label: 'Materials Shared', type: 'text'},
+      {key: 'geo_area', label: 'Geo Area', type: 'text'},
+      {key: 'active_deployment', label: 'Active Deployment', type: 'text'},
+    ],
+    editorial_essays: [
+      {key: 'date', label: 'Date', type: 'text'},
+      {key: 'activity_type', label: 'Type', type: 'text'},
+      {key: 'publication', label: 'Publication', type: 'text'},
+      {key: 'topic', label: 'Topic', type: 'text'},
+      {key: 'notes', label: 'Notes', type: 'text'},
+    ],
+    vote411: [
+      {key: 'date', label: 'Date', type: 'text'},
+      {key: 'activity_type', label: 'Type', type: 'text'},
+      {key: 'race', label: 'Race / Office', type: 'text'},
+      {key: 'candidate_count', label: 'Candidates', type: 'num'},
+      {key: 'notes', label: 'Notes', type: 'text'},
+    ],
+    social_media: [
+      {key: 'date', label: 'Snapshot Date', type: 'text'},
+      {key: 'platform', label: 'Platform', type: 'text'},
+      {key: 'reach', label: 'Reach', type: 'num'},
+      {key: 'engagement', label: 'Engagement', type: 'num'},
+      {key: 'audience', label: 'Audience', type: 'num'},
+    ],
+    rallies: [
+      {key: 'date', label: 'Date', type: 'text'},
+      {key: 'theme', label: 'Theme', type: 'text'},
+      {key: 'organizer', label: 'Organizer', type: 'text'},
+      {key: 'attendance', label: 'Attendance', type: 'num'},
+      {key: 'media_coverage', label: 'Media Coverage', type: 'text'},
+      {key: 'co_sponsors', label: 'Co-sponsors', type: 'text'},
+    ],
+    natural_resources: [
+      {key: 'date', label: 'Date', type: 'text'},
+      {key: 'activity_type', label: 'Activity Type', type: 'text'},
+      {key: 'title_or_topic', label: 'Title / Topic', type: 'text'},
+      {key: 'counterpart', label: 'Partner', type: 'text'},
+      {key: 'format', label: 'Format', type: 'text'},
+      {key: 'people_reached', label: 'People Reached', type: 'num'},
+    ],
+  };
+  const cfg = configs[key];
+  let html = `<table class="sortable"><thead><tr>`;
+  cfg.forEach(c => { html += `<th data-sort="${c.type}"${c.type === 'num' ? ' class="num"' : ''}>${c.label}</th>`; });
+  html += `</tr></thead><tbody>`;
+  rows.forEach(r => {
+    html += `<tr>`;
+    cfg.forEach(c => {
+      const v = r[c.key];
+      if (c.type === 'num') {
+        html += `<td class="num" data-value="${v||0}">${num(v)}</td>`;
+      } else {
+        html += `<td>${v === null || v === undefined ? nr(null) : v}</td>`;
+      }
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  return html;
+}
+
+// ---------- Table sorting ----------
+function makeTablesSortable(container) {
+  container.querySelectorAll('table.sortable').forEach(table => {
+    const headers = table.querySelectorAll('thead th');
+    headers.forEach((th, idx) => {
+      th.addEventListener('click', () => {
+        const asc = !th.classList.contains('sort-asc');
+        headers.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+        th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const type = th.dataset.sort;
+        rows.sort((a, b) => {
+          const av = a.children[idx].dataset.value !== undefined ? a.children[idx].dataset.value : a.children[idx].textContent;
+          const bv = b.children[idx].dataset.value !== undefined ? b.children[idx].dataset.value : b.children[idx].textContent;
+          if (type === 'num') {
+            const na = parseFloat(av) || 0;
+            const nb = parseFloat(bv) || 0;
+            return asc ? na - nb : nb - na;
+          }
+          return asc ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
         });
+        rows.forEach(r => tbody.appendChild(r));
+      });
+    });
+  });
+}
 
-        // Chart 2: Hours by Category
-        const ctx2 = document.getElementById('chart-hours-by-category').getContext('2d');
-        new Chart(ctx2, {
-            type: 'doughnut',
-            data: {
-                labels: data.hoursByCategory.labels,
-                datasets: [{
-                    data: data.hoursByCategory.values,
-                    backgroundColor: ['#4a0138', '#eca400', '#c96bb5'],
-                    borderColor: '#FFFFFF',
-                    borderWidth: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                aspectRatio: 1,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 15,
-                            font: { size: 12 }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.parsed + ' hours';
-                            }
-                        }
-                    }
-                }
-            }
-        });
+// ---------- Charts ----------
+function drawChartHoursTeam() {
+  const q2 = DATA.q2.hours_by_team;
+  const teams = Object.keys(q2).filter(t => q2[t] > 0).sort((a, b) => q2[b] - q2[a]);
+  new Chart(document.getElementById('chartHoursTeam'), {
+    type: 'bar',
+    data: {
+      labels: teams,
+      datasets: [{label: 'Q2 hours', data: teams.map(t => q2[t]), backgroundColor: '#820263', borderColor: '#521c50', borderWidth: 1}]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: {legend: {display: false}},
+      scales: {x: {beginAtZero: true, title: {display: true, text: 'Hours'}}, y: {ticks: {font: {size: 11}}}}
+    }
+  });
+}
 
-        // Chart 3: Event Attendance
-        const ctx3 = document.getElementById('chart-event-attendance').getContext('2d');
-        new Chart(ctx3, {
-            type: 'bar',
-            data: {
-                labels: data.eventAttendance.labels,
-                datasets: [{
-                    label: 'Attendees',
-                    data: data.eventAttendance.values,
-                    backgroundColor: '#eca400',
-                    borderColor: '#820263',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.parsed.y + ' attendees';
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 10
-                        }
-                    }
-                }
-            }
-        });
+function drawChartHoursCat() {
+  const c = DATA.q2.hours_by_cat;
+  new Chart(document.getElementById('chartHoursCat'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Election', 'Non-Election', 'Admin'],
+      datasets: [{data: [c.Election, c['Non-Election'], c.Admin], backgroundColor: DOUGHNUT_PALETTE, borderColor: 'white', borderWidth: 2}]
+    },
+    options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'bottom'}}}
+  });
+}
 
-        // Chart 4: Voter Services Impact
-        const ctx4 = document.getElementById('chart-voter-services').getContext('2d');
-        new Chart(ctx4, {
-            type: 'bar',
-            data: {
-                labels: data.voterServices.labels,
-                datasets: [
-                    {
-                        label: 'People Engaged',
-                        data: data.voterServices.engaged,
-                        backgroundColor: '#820263',
-                        borderColor: '#820263',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'VBM Forms Provided',
-                        data: data.voterServices.vbm,
-                        backgroundColor: '#eca400',
-                        borderColor: '#d4890a',
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.y;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-        } catch(e) { console.error('Chart.js failed to load:', e); }
+function drawChartAttendance() {
+  const items = [
+    {label: 'Candidate Forums', v: (DATA.metrics.candidate_forums.Q2.live||0) + (DATA.metrics.candidate_forums.Q2.virtual||0)},
+    {label: 'Speakers Bureau', v: (DATA.metrics.speakers_bureau.Q2.live_attendees||0) + (DATA.metrics.speakers_bureau.Q2.virtual_attendees||0)},
+    {label: 'Voter Services', v: DATA.metrics.voter_services.Q2.people_engaged || 0},
+    {label: 'Education Action Team', v: DATA.metrics.education_action_team.Q2.people_reached || 0},
+    {label: 'Membership', v: DATA.metrics.membership.Q2.attending || 0},
+  ].filter(x => x.v > 0);
+  new Chart(document.getElementById('chartAttendance'), {
+    type: 'bar',
+    data: {
+      labels: items.map(x => x.label),
+      datasets: [{label: 'Q2 attendance/reach', data: items.map(x => x.v),
+        backgroundColor: ['#820263', '#eca400', '#9a1a75', '#eca400', '#820263'], borderWidth: 1}]
+    },
+    options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true}}}
+  });
+}
 
-        // ===== TABLE POPULATION =====
-        function populateSummaryTable() {
-            const tbody = document.getElementById('summary-table-body');
-            tbody.innerHTML = '';
-            data.teams.forEach(team => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${team.name}</td>
-                    <td class="text-center">${team.activities}</td>
-                    <td class="text-center">${nr(team.peopleReached)}</td>
-                    <td class="text-right">${team.hours > 0 ? team.hours.toFixed(2) + ' hrs' : nr(null)}</td>
-                `;
-                tbody.appendChild(row);
-            });
-            makeTableSortable('summary-table');
-        }
+function drawChartVS() {
+  const rows = DATA.details.voter_services.filter(r => r.quarter === 'Q2');
+  const labels = rows.map(r => r.date || 'N/R');
+  new Chart(document.getElementById('chartVS'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {label: 'People Engaged', data: rows.map(r => r.people_engaged || 0), backgroundColor: '#820263'},
+        {label: 'VBM Forms Given', data: rows.map(r => r.vbm_given || 0), backgroundColor: '#eca400'}
+      ]
+    },
+    options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'bottom'}}, scales: {y: {beginAtZero: true}, x: {ticks: {maxRotation: 45, minRotation: 45, font: {size: 10}}}}}
+  });
+}
 
-        function populateTableData() {
-            // Speakers Bureau
-            const speakersBody = document.getElementById('speakers-table-body');
-            speakersBody.innerHTML = speakersBureauData.map(row => `
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${row.title}</td>
-                    <td>${row.host}</td>
-                    <td>${row.location}</td>
-                    <td>${row.speaker}</td>
-                    <td>${row.audience}</td>
-                    <td class="text-center">${row.attendees}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('speakers-table');
+function drawChartQ1Q2Team() {
+  const all = Object.keys(DATA.q1.hours_by_team).filter(t => (DATA.q1.hours_by_team[t] > 0) || (DATA.q2.hours_by_team[t] > 0));
+  all.sort((a, b) => (DATA.q2.hours_by_team[b] || 0) - (DATA.q2.hours_by_team[a] || 0));
+  new Chart(document.getElementById('chartQ1Q2Team'), {
+    type: 'bar',
+    data: {
+      labels: all,
+      datasets: [
+        {label: 'Q1', data: all.map(t => DATA.q1.hours_by_team[t] || 0), backgroundColor: '#9a1a75'},
+        {label: 'Q2', data: all.map(t => DATA.q2.hours_by_team[t] || 0), backgroundColor: '#eca400'}
+      ]
+    },
+    options: {indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'bottom'}}, scales: {x: {beginAtZero: true, title: {display: true, text: 'Hours'}}}}
+  });
+}
 
-            // Education - Legislative
-            const eduLegBody = document.getElementById('education-legislative-body');
-            eduLegBody.innerHTML = educationLegislativeData.map(row => `
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${row.type}</td>
-                    <td>${row.topic}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('education-legislative-table');
+function drawChartQ1Q2Cat() {
+  const cats = ['Election', 'Non-Election', 'Admin'];
+  new Chart(document.getElementById('chartQ1Q2Cat'), {
+    type: 'bar',
+    data: {
+      labels: cats,
+      datasets: [
+        {label: 'Q1', data: cats.map(c => DATA.q1.hours_by_cat[c]), backgroundColor: '#9a1a75'},
+        {label: 'Q2', data: cats.map(c => DATA.q2.hours_by_cat[c]), backgroundColor: '#eca400'}
+      ]
+    },
+    options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'bottom'}}, scales: {y: {beginAtZero: true, title: {display: true, text: 'Hours'}}}}
+  });
+}
 
-            // Education - Collaborative
-            const eduCollabBody = document.getElementById('education-collaborative-body');
-            eduCollabBody.innerHTML = educationCollaborativeData.map(row => `
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${row.org}</td>
-                    <td>${row.format}</td>
-                    <td>${row.topic}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('education-collaborative-table');
-
-            // Education - School Board
-            const eduSBBody = document.getElementById('education-schoolboard-body');
-            eduSBBody.innerHTML = educationSchoolBoardData.map(row => `
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${row.type}</td>
-                    <td>${row.duration}</td>
-                    <td>${row.speaking}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('education-schoolboard-table');
-
-            // Education - Events
-            const eduEventsBody = document.getElementById('education-events-body');
-            eduEventsBody.innerHTML = educationEventsData.map(row => `
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${row.event}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('education-events-table');
-
-            // Voter Services
-            const voterServicesBody = document.getElementById('voter-services-table-body');
-            voterServicesBody.innerHTML = voterServicesData.map(row => `
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${row.type}</td>
-                    <td class="text-center">${row.online}</td>
-                    <td class="text-center">${row.hardcopy}</td>
-                    <td class="text-center">${row.vbmProvided}</td>
-                    <td class="text-center">${row.engaged}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('voter-services-table');
-
-            // Event Planning
-            const eventPlanningBody = document.getElementById('event-planning-table-body');
-            eventPlanningBody.innerHTML = eventPlanningData.map(row => `
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${row.title}</td>
-                    <td>${row.type}</td>
-                    <td class="text-center">${nr(row.registered)}</td>
-                    <td class="text-center">${nr(row.live)}</td>
-                    <td class="text-center">${nr(row.virtual)}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('event-planning-table');
-
-            // Membership
-            const membershipBody = document.getElementById('membership-table-body');
-            membershipBody.innerHTML = membershipData.map(row => `
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${row.event}</td>
-                    <td class="text-center">${row.attendees}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('membership-table');
-
-            // Hot Topics
-            const hotTopicsBody = document.getElementById('hot-topics-table-body');
-            hotTopicsBody.innerHTML = hotTopicsData.map(row => `
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${row.title}</td>
-                    <td>${row.type}</td>
-                    <td class="text-center">${row.attendees}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('hot-topics-table');
-
-            // Editorial
-            const editorialBody = document.getElementById('editorial-table-body');
-            editorialBody.innerHTML = editorialData.map(row => `
-                <tr>
-                    <td>${row.date}</td>
-                    <td>${row.publication}</td>
-                    <td>${row.topic}</td>
-                    <td>${row.type}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('editorial-table');
-
-            // YouTube
-            const youtubeData = [
-                { title: 'Beyond the Classroom: Key Issues Shaping Education in Sarasota County', published: 'Mar 5, 2026', jan: 0, feb: 0, mar: 51, total: 51 },
-                { title: 'Project 180: Effectively Reintegrating Returning Citizens', published: 'Mar 4, 2026', jan: 0, feb: 0, mar: 10, total: 10 },
-                { title: 'March 2026 Sarasota Chapter Update', published: 'Mar 25, 2026', jan: 0, feb: 0, mar: 8, total: 8 },
-                { title: 'LWVSRQ Chapter Update 26 02 23', published: 'Mar 5, 2026', jan: 0, feb: 0, mar: 8, total: 8 },
-                { title: 'What Is Redistricting and Why is it Important to You?', published: 'Feb 17, 2022', jan: 2, feb: 1, mar: 5, total: 8 },
-                { title: 'Why the League of Women Voters of Florida Opposes Mid-Cycle Redistricting', published: 'Nov 7, 2025', jan: 1, feb: 3, mar: 1, total: 5 },
-                { title: 'The Digital Democracy Project: We Have the Technology. You Have the Power!', published: 'Oct 7, 2025', jan: 1, feb: 3, mar: 0, total: 4 }
-            ];
-
-            const youtubeBody = document.getElementById('youtube-table-body');
-            youtubeBody.innerHTML = youtubeData.map(row => `
-                <tr>
-                    <td>${row.title}</td>
-                    <td>${row.published}</td>
-                    <td class="text-center">${row.jan}</td>
-                    <td class="text-center">${row.feb}</td>
-                    <td class="text-center">${row.mar}</td>
-                    <td class="text-center font-bold">${row.total}</td>
-                </tr>
-            `).join('');
-            makeTableSortable('youtube-table');
-
-            // YouTube Monthly Chart
-            try {
-                const ctxYT = document.getElementById('chart-youtube-monthly').getContext('2d');
-                new Chart(ctxYT, {
-                    type: 'bar',
-                    data: {
-                        labels: ['January', 'February', 'March'],
-                        datasets: [{
-                            label: 'Unique Viewers',
-                            data: [4, 7, 83],
-                            backgroundColor: ['#c96bb5', '#820263', '#4a0138'],
-                            borderColor: '#820263',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.parsed.y + ' unique viewers';
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: { stepSize: 10 }
-                            }
-                        }
-                    }
-                });
-            } catch(e) { console.error('YouTube chart failed:', e); }
-        }
-
-        // ===== TAB NAVIGATION =====
-        function initializeTabs() {
-            const tabContainer = document.getElementById('tabContainer');
-            const tabs = [
-                { label: 'Overview', id: 'overview' },
-                { label: 'Board of Directors', id: 'board' },
-                { label: 'Communications', id: 'communications' },
-                { label: 'Editorial & Essays', id: 'editorial' },
-                { label: 'Education Action Team', id: 'education-action' },
-                { label: 'Event Planning', id: 'event-planning' },
-                { label: 'Hot Topics', id: 'hot-topics' },
-                { label: 'Membership', id: 'membership' },
-                { label: 'Speakers Bureau', id: 'speakers-bureau' },
-                { label: 'Vote 411', id: 'vote411' },
-                { label: 'Voter Services', id: 'voter-services' }
-            ];
-
-            tabs.forEach((tab, index) => {
-                const button = document.createElement('button');
-                button.className = 'tab-button' + (index === 0 ? ' active' : '');
-                button.textContent = tab.label;
-                button.onclick = () => switchTab(tab.id, button);
-                tabContainer.appendChild(button);
-            });
-        }
-
-        function switchTab(tabId, button) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
-
-            document.getElementById('tab-' + tabId).classList.add('active');
-            button.classList.add('active');
-        }
-
-        // ===== SORTABLE TABLES =====
-        function makeTableSortable(tableId) {
-            const table = document.getElementById(tableId);
-            const headers = table.querySelectorAll('th');
-
-            headers.forEach((header, index) => {
-                header.style.cursor = 'pointer';
-                header.onclick = () => sortTable(tableId, index);
-            });
-        }
-
-        function sortTable(tableId, columnIndex) {
-            const table = document.getElementById(tableId);
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-
-            const isAscending = !table.dataset.sortAsc || table.dataset.sortAsc === 'false';
-            table.dataset.sortAsc = isAscending;
-            table.dataset.sortCol = columnIndex;
-
-            rows.sort((a, b) => {
-                const aVal = a.cells[columnIndex].textContent.trim();
-                const bVal = b.cells[columnIndex].textContent.trim();
-
-                const aNum = parseFloat(aVal);
-                const bNum = parseFloat(bVal);
-
-                if (!isNaN(aNum) && !isNaN(bNum)) {
-                    return isAscending ? aNum - bNum : bNum - aNum;
-                } else {
-                    return isAscending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-                }
-            });
-
-            tbody.innerHTML = '';
-            rows.forEach(row => tbody.appendChild(row));
-        }
-
-        // ===== INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeTabs();
-            populateTableData();
-            populateSummaryTable();
-        });
-    </script>
+initTabs();
+</script>
 </body>
 </html>
